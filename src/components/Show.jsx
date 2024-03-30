@@ -1,4 +1,12 @@
-import { Pause, Play, Repeat1, SkipBack, SkipForward } from "lucide-react";
+import {
+  Pause,
+  Play,
+  Repeat,
+  Repeat1,
+  Shuffle,
+  SkipBack,
+  SkipForward,
+} from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -10,13 +18,9 @@ const Show = ({ play, setPlay, audioElement, query }) => {
   let { id } = useParams();
   const [audioTrack, setAudioTrack] = useState({});
   const [isLoop, setIsLoop] = useState(false);
+  const [forwd, setForwd] = useState(true);
+  const [onceLoop, setOnceLoop] = useState(false);
   const dragRef = useRef();
-
-  // useEffect(() => {
-  //   dragRef.current.addEventListener("dragstart", (e) => {
-  //     console.log(e);
-  //   })
-  // }, [])
 
   useEffect(() => {
     fetchsongData();
@@ -28,7 +32,7 @@ const Show = ({ play, setPlay, audioElement, query }) => {
     } else {
       audioElement.current.pause();
     }
-  }, [play]);
+  });
 
   const fetchsongData = async () => {
     const options = {
@@ -36,7 +40,6 @@ const Show = ({ play, setPlay, audioElement, query }) => {
       url: `${import.meta.env.VITE_WEB_URL}/api/search/songs`,
       params: { query: query },
     };
-    console.log(query)
     try {
       const { data } = await axios.request(options);
       setSongData(data.data.results);
@@ -52,9 +55,23 @@ const Show = ({ play, setPlay, audioElement, query }) => {
 
   const onPlaying = () => {
     const duration = audioElement.current.duration;
-    const ct = audioElement.current.currentTime;
+    const currentTime = audioElement.current.currentTime;
 
-    setAudioTrack({ progress: (ct / duration) * 100, length: duration });
+    setAudioTrack({
+      progress: (currentTime / duration) * 100,
+      length: duration,
+    });
+    if (currentTime == duration && isLoop) {
+      audioElement.current.currentTime = 0;
+    } else if (currentTime == duration && onceLoop) {
+      audioElement.current.currentTime = 0;
+      setOnceLoop(false);
+      setForwd(true);
+      setIsLoop(false);
+    } else if (currentTime == duration && forwd) {
+      audioElement.current.currentTime = 0;
+      skipForward();
+    }
   };
 
   const skipBack = async () => {
@@ -64,9 +81,7 @@ const Show = ({ play, setPlay, audioElement, query }) => {
     } else {
       setSong(songData[index - 1]);
     }
-    setPlay(false);
 
-    setPlay(false);
     setAudioTrack({
       progress:
         (audioElement.current.currentTime = 0 / audioElement.current.duration) *
@@ -82,7 +97,6 @@ const Show = ({ play, setPlay, audioElement, query }) => {
     } else {
       setSong(songData[index + 1]);
     }
-    setPlay(false);
 
     setAudioTrack({
       progress:
@@ -92,8 +106,41 @@ const Show = ({ play, setPlay, audioElement, query }) => {
     });
   };
 
-  const repeat = () => {
-    audioElement.current.loop = true;
+  let setConditions = () => {
+    if (forwd) {
+      setOnceLoop(true);
+      setIsLoop(false);
+      setForwd(false);
+    } else if (onceLoop) {
+      setIsLoop(true);
+      setOnceLoop(false);
+      setForwd(false);
+    } else {
+      setForwd(true);
+      setOnceLoop(false);
+      setIsLoop(false);
+    }
+  };
+
+  const updatePlaybar = (e) => {
+    try {
+      // Get the bounding rectangle of the playbar
+      const barRect = dragRef.current.getBoundingClientRect();
+      // Calculate the width of the playbar
+      const barWidth = barRect.width;
+      // Calculate the offset of the click event within the playbar
+      const clickOffsetX = e.clientX - barRect.left;
+      // Calculate the new position of the playbar based on the click position
+      const newProgress = (clickOffsetX / barWidth) * 100;
+      // Update the progress of the audio track
+      setAudioTrack({ ...audioTrack, progress: newProgress });
+
+      // Update the current time of the audio element
+      const newCurrentTime = (clickOffsetX / barWidth) * audioTrack.length;
+      audioElement.current.currentTime = newCurrentTime;
+    } catch (error) {
+      console.error("An error occurred while updating playbar:", error);
+    }
   };
 
   return (
@@ -121,21 +168,22 @@ const Show = ({ play, setPlay, audioElement, query }) => {
         </div>
       </div>
       <div className="fixed bottom-0 left-0 right-0 bg-white/50 dark:bg-white/10 backdrop-blur-sm flex flex-col items-center justify-center gap-2 py-4">
-        <div className="relative w-full flex items-center justify-center group gap-2 py-2 px-28 cursor-pointer z-50">
+        <div className="relative w-full flex items-center justify-center group gap-2 py-2 px-6 sm:px-20 cursor-pointer z-50">
           <p className="text-xs font-semibold text-slate-700 dark:text-white">
             {(audioTrack.progress / 60).toFixed(2) === "NaN"
               ? ""
-              : (audioTrack.progress / 60).toFixed(2)}
+              : (audioElement.current.currentTime / 60).toFixed(2)}
           </p>
-          <div className="w-full h-1 bg-gray-200 dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer">
+          <div
+            className="w-full h-1 bg-gray-200 dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer"
+            ref={dragRef}
+            onClick={updatePlaybar}
+          >
             <div
               className="w-full h-1 bg-slate-700 dark:bg-white group-hover:bg-slate-400 rounded-full absolute z-10 flex items-center justify-end"
               style={{ left: `calc(${audioTrack.progress}% - 100%)` }}
             >
-              <div
-                className="h-3 w-3 bg-transparent fixed group-hover:bg-slate-700 dark:group-hover:bg-white rounded-full z-20 cursor-pointer -mr-1.5"
-                ref={dragRef}
-              />
+              <div className="h-3 w-3 bg-transparent fixed group-hover:bg-slate-700 dark:group-hover:bg-white rounded-full z-20 cursor-pointer -mr-1.5" />
             </div>
           </div>
           <p className="text-xs font-semibold text-slate-700 dark:text-white">
@@ -168,12 +216,18 @@ const Show = ({ play, setPlay, audioElement, query }) => {
           >
             <SkipForward />
           </div>
-          {/* <div
-            className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
-            onClick={repeat}
+          <div
+            className="bg-slate-500/10 p-2 rounded-full cursor-pointer"
+            onClick={setConditions}
           >
-            <Repeat1 className={`${isLoop ? "text-rose-500" : ""}`} />
-          </div> */}
+            {isLoop ? (
+              <Repeat1 className="text-cyan-700 dark:text-cyan-500" />
+            ) : forwd ? (
+              <Shuffle className="text-slate-800 dark:text-slate-200" />
+            ) : (
+              <Repeat className="text-pink-800 dark:text-rose-600" />
+            )}
+          </div>
         </div>
       </div>
     </div>
