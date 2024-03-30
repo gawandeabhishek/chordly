@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 let index = 0;
 
-const Show = ({ play, setPlay, audioElement }) => {
+const Show = ({ play, setPlay, audioElement, query }) => {
   const [song, setSong] = useState();
   const [songData, setSongData] = useState();
   let { id } = useParams();
@@ -34,9 +34,9 @@ const Show = ({ play, setPlay, audioElement }) => {
     const options = {
       method: "GET",
       url: `${import.meta.env.VITE_WEB_URL}/api/search/songs`,
-      params: { query: id },
+      params: { query: query },
     };
-
+    console.log(query)
     try {
       const { data } = await axios.request(options);
       setSongData(data.data.results);

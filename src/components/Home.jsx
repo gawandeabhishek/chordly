@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
 
-const Home = ({ setPlay }) => {
+const Home = ({ setPlay, setQuery }) => {
   const [tracks, setTracks] = useState();
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const Home = ({ setPlay }) => {
   return (
     <div className="mx-10 mb-10 min-h-[calc(100vh-10rem)] m-2 flex flex-wrap gap-4 items-center justify-around">
       {tracks?.map((data, idx) => (
-        <Link to={`/show/${data.name}`} onClick={() =>  setPlay(true) } key={idx}>
+        <Link to={`/show/song`} onClick={() =>  {setPlay(true); setQuery(data.name)} } key={idx}>
           <div className="w-48 h-[20rem] p-2 rounded-md bg-white dark:bg-slate-900/20 gap-2 flex flex-col items-center justify-start cursor-pointer hover:p-2 transition-all">
             <img
               src={data.image[data.image.length - 1].url}
