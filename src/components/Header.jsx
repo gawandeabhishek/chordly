@@ -50,9 +50,11 @@ const Header = ({ query, setQuery }) => {
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       // Programmatically click on the link when Enter key is pressed
-      document.getElementById('searchLink').click();
+      document.getElementById("searchLink").click();
+      setShowMenu(false);
+      event.target.value = "";
     }
   };
 
@@ -61,8 +63,8 @@ const Header = ({ query, setQuery }) => {
   };
 
   const handleLinkClick = (event) => {
-
     setQuery(query);
+    event.target.value = "";
   };
 
   return (
@@ -123,14 +125,27 @@ const Header = ({ query, setQuery }) => {
             "gap-4 items-start flex flex-col mx-auto mt-8 bg-transparent z-50 sm:hidden"
           }
         >
-          <Link to={"/"} className="flex items-center justify-center gap-4">
+          <Link
+            to={"/"}
+            className="flex items-center justify-center gap-4"
+            onClick={() => {
+              setShowMenu(false);
+            }}
+          >
             <Home className="text-slate-800 dark:text-slate-300 cursor-pointer" />
             <p className="text-xl font-semibold font-sans text-slate-800 dark:text-slate-300">
               Home
             </p>
           </Link>
           <div className="flex items-center justify-center gap-4">
-            <Link to={`/show/song`} onClick={() => setQuery(query)}>
+            <Link
+              to={`/show/song`}
+              onClick={(e) => {
+                setQuery(query);
+                e.target.value = "";
+                setShowMenu(false);
+              }}
+            >
               <Search className="cursor-pointer text-slate-800 dark:text-slate-300" />
             </Link>
             <input
@@ -138,6 +153,7 @@ const Header = ({ query, setQuery }) => {
               className="rounded-full outline-none px-4 py-2 w-[100%] placeholder:text-slate-600 dark:placeholder:text-slate-400 text-slate-800 dark:text-slate-300 bg-white dark:bg-black drop-shadow-2xl"
               placeholder="search song"
               onChange={getQuery}
+              onKeyDown={handleKeyPress}
             />
           </div>
         </div>
