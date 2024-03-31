@@ -1,0 +1,27 @@
+<svg width="362" height="362" viewBox="0 0 362 362" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_5_19)">
+<g clip-path="url(#clip1_5_19)">
+<path d="M0 180.727C0 80.914 80.914 0 180.727 0C280.541 0 361.455 80.914 361.457 180.727C361.457 280.541 280.543 361.455 180.727 361.457C80.914 361.457 0 280.543 0 180.727ZM180.727 340.478C268.955 340.478 340.476 268.957 340.478 180.727C340.478 92.5001 268.957 20.9789 180.727 20.9789C92.5001 20.9789 20.9789 92.5001 20.9789 180.727C20.9789 268.955 92.5001 340.476 180.727 340.478Z" fill="#EC4899"/>
+<g clip-path="url(#clip2_5_19)">
+<g clip-path="url(#clip3_5_19)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M141.437 138.194C139.097 152.689 142.1 168.019 154.492 176.436C141.865 120.094 171.987 97.7082 199.884 82.3157C167.388 128.602 233.818 129.803 237.596 182.998C240.82 228.348 209.647 263.71 173.761 279.141C174.174 233.299 128.471 227.057 123.875 189.559C122.076 174.892 130.425 148.124 141.437 138.194Z" fill="#EC4899"/>
+</g>
+</g>
+</g>
+</g>
+<rect x="0.5" y="0.5" width="360.457" height="360.457" stroke="#EC4899"/>
+<defs>
+<clipPath id="clip0_5_19">
+<rect width="361.457" height="361.457" fill="white"/>
+</clipPath>
+<clipPath id="clip1_5_19">
+<rect width="361.457" height="361.457" fill="white"/>
+</clipPath>
+<clipPath id="clip2_5_19">
+<rect width="114.195" height="196.825" fill="white" transform="translate(123.631 82.3157)"/>
+</clipPath>
+<clipPath id="clip3_5_19">
+<rect width="114.195" height="196.825" fill="white" transform="translate(123.631 82.3157)"/>
+</clipPath>
+</defs>
+</svg>

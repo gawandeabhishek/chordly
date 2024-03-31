@@ -28,6 +28,13 @@ const Show = ({ play, setPlay, audioElement, query }) => {
     fetchsongData();
   }, [query]);
   
+useEffect(() => {
+    if (play) {
+      audioElement.current.play();
+    } else {
+      audioElement.current.pause();
+    }
+  });
   useEffect(() => {
     // Retrieve the song string from localStorage
     const savedSongString = localStorage.getItem("savedQuery");
@@ -60,24 +67,6 @@ const Show = ({ play, setPlay, audioElement, query }) => {
       }
     }
   }, [!audioTrack]);
-  
-  useEffect(() => {
-    const handleMouseOver = () => {
-      if (play) {
-        audioElement.current.play();
-      } else {
-        audioElement.current.pause();
-      }
-    };
-  
-    // Add event listener for mouseover event
-    document.addEventListener('mouseover', handleMouseOver);
-  
-    // Clean up event listener
-    return () => {
-      document.removeEventListener('mouseover', handleMouseOver);
-    };
-  }, [play]);
 
   useEffect(() => {
     // Convert the song object to a string using JSON.stringify
@@ -209,7 +198,7 @@ const Show = ({ play, setPlay, audioElement, query }) => {
 
   return (
     <div className="min-h-[calc(100vh-12rem)]">
-      <div className="flex items-center justify-center flex-col sm:flex-row gap-10 sm:gap-20 mx-16 mt-0 mb-20 sm:m-16">
+      <div className="flex items-center justify-center flex-col sm:flex-row gap-10 sm:gap-20 mx-16 mt-8 mb-20 sm:m-16">
         <img
           src={song?.image[song?.image.length - 1].url}
           alt={song?.name}
