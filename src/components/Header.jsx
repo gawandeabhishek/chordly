@@ -6,7 +6,7 @@ import axios from "axios";
 const Header = ({ query, setQuery }) => {
   const [mode, setMode] = useState();
   const [showMenu, setShowMenu] = useState(false);
-  
+
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   let location = useLocation();
@@ -15,9 +15,15 @@ const Header = ({ query, setQuery }) => {
     const fetchData = async () => {
       try {
         // Fetch sunset time for a specific location (e.g., latitude and longitude of San Francisco)
-        const response = await axios.get('https://api.sunrise-sunset.org/json?lat=37.7749&lng=-122.4194&formatted=0');
+        const response = await axios.get(
+          "https://api.sunrise-sunset.org/json?lat=37.7749&lng=-122.4194&formatted=0"
+        );
         const sunsetTimeUTC = new Date(response.data.results.sunset);
-        const sunsetTimeLocal = new Date(sunsetTimeUTC.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+        const sunsetTimeLocal = new Date(
+          sunsetTimeUTC.toLocaleString("en-US", {
+            timeZone: "America/Los_Angeles",
+          })
+        );
         const currentTime = new Date();
 
         // Calculate time difference in milliseconds
@@ -25,10 +31,10 @@ const Header = ({ query, setQuery }) => {
 
         // If sunset has occurred, switch to dark theme
         if (timeDifference < 0) {
-          setMode('dark');
+          setMode("dark");
         }
       } catch (error) {
-        console.error('Error fetching sunset time:', error);
+        console.error("Error fetching sunset time:", error);
       }
     };
 
@@ -47,9 +53,22 @@ const Header = ({ query, setQuery }) => {
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      // Programmatically click on the link when Enter key is pressed
+      document.getElementById('searchLink').click();
+    }
+  };
+
   const getQuery = (e) => {
     setQuery(e.target.value);
   };
+
+  const handleLinkClick = (event) => {
+
+    setQuery(query);
+  };
+
   return (
     <div className="sticky left-0 top-0 right-0 flex justify-between items-center px-10 bg-white/50 dark:bg-white/10 backdrop-blur-sm h-14 w-full">
       <div className="sm:flex gap-4 items-center hidden">
@@ -57,12 +76,7 @@ const Header = ({ query, setQuery }) => {
           <Home className="text-slate-800 dark:text-slate-300 cursor-pointer" />
         </Link>
 
-        <Link
-          to={"/show/song"}
-          onClick={() => {
-            setQuery(query);
-          }}
-        >
+        <Link to="/show/song" id="searchLink" onClick={handleLinkClick}>
           <Search className="cursor-pointer text-slate-800 dark:text-slate-300" />
         </Link>
         <input
@@ -70,6 +84,7 @@ const Header = ({ query, setQuery }) => {
           className="rounded-full outline-none px-4 py-2 w-[100%] placeholder:text-slate-600 dark:placeholder:text-slate-400 text-slate-800 dark:text-slate-300 bg-white dark:bg-black drop-shadow-2xl"
           placeholder="search song"
           onChange={getQuery}
+          onKeyDown={handleKeyPress}
         />
       </div>
       <div className="flex gap-4 w-full sm:w-max justify-between sm:justify-normal items-center">
@@ -77,7 +92,7 @@ const Header = ({ query, setQuery }) => {
           <img
             src="https://img.freepik.com/premium-photo/man-wearing-glasses-is-smiling-holding-tablet_905510-2118.jpg?w=740"
             alt="alex"
-            className="rounded-full h-8 w-8 cursor-pointer"
+            className="rounded-full h-[2.50rem] w-[2.50rem] cursor-pointer"
           />
         </Link>
         <div className="flex items-center justify-center gap-4 px-4 py-2 sm:p-2 rounded-full bg-slate-500/10">

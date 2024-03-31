@@ -8,31 +8,98 @@ import {
   SkipForward,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import debounce from "lodash/debounce";
 import axios from "axios";
-let index = 0;
 
 const Show = ({ play, setPlay, audioElement, query }) => {
   const [song, setSong] = useState();
   const [songData, setSongData] = useState();
-  let { id } = useParams();
-  const [audioTrack, setAudioTrack] = useState({});
+  const [audioTrack, setAudioTrack] = useState();
   const [isLoop, setIsLoop] = useState(false);
   const [forwd, setForwd] = useState(true);
   const [onceLoop, setOnceLoop] = useState(false);
+  const [index, setIndex] = useState(0);
   const dragRef = useRef();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchsongData();
-  }, []);
+  }, [query]);
+  
+  useEffect(() => {
+    // Retrieve the song string from localStorage
+    const savedSongString = localStorage.getItem("savedQuery");
+    const savedSongDataString = localStorage.getItem("savedData");
+    const savedAudioTrackString = localStorage.getItem("savedAudioTrack");
+    const savedIndex = localStorage.getItem("savedIndex");
+    const savedAudioTrackState = localStorage.getItem("savedAudioTrackState");
+    if (
+      savedSongString &&
+      savedIndex !== null &&
+      savedSongDataString &&
+      savedAudioTrackString
+    ) {
+      try {
+        // Parse the song string back into an object using JSON.parse
+        const savedSong = JSON.parse(savedSongString);
+        const savedSongData = JSON.parse(savedSongDataString);
+        const savedAudioTrack = JSON.parse(savedAudioTrackString);
+        setSong(savedSong);
+        setSongData(savedSongData);
+        setIndex(parseInt(savedIndex));
+        setAudioTrack(savedAudioTrack);
+        setPlay(savedAudioTrackState === "true");
+        
+          audioElement.current.currentTime = audioTrack.progress / 100 * audioTrack.length;
+          audioElement.current.play();
+      } catch (error) {
+        console.error("Error parsing saved song:", error);
+        // Optionally handle the error here
+      }
+    }
+  }, [!audioTrack]);
+  
+  useEffect(() => {
+    const handleMouseOver = () => {
+      if (play) {
+        audioElement.current.play();
+      } else {
+        audioElement.current.pause();
+      }
+    };
+  
+    // Add event listener for mouseover event
+    document.addEventListener('mouseover', handleMouseOver);
+  
+    // Clean up event listener
+    return () => {
+      document.removeEventListener('mouseover', handleMouseOver);
+    };
+  }, [play]);
 
   useEffect(() => {
-    if (play) {
-      audioElement.current.play();
-    } else {
-      audioElement.current.pause();
+    // Convert the song object to a string using JSON.stringify
+    const songString = JSON.stringify(song);
+    const songDataString = JSON.stringify(songData);
+    const audioTrackString = JSON.stringify(audioTrack);
+
+    // Check if the index is a valid number
+    if (
+      !isNaN(index) &&
+      typeof songString !== "undefined" &&
+      typeof songData !== "undefined" &&
+      typeof audioTrackString !== "undefined"
+    ) {
+      localStorage.setItem("savedIndex", index);
+      localStorage.setItem("savedQuery", songString);
+      localStorage.setItem("savedData", songDataString);
+      localStorage.setItem("savedAudioTrack", audioTrackString);
+      localStorage.setItem("savedAudioTrackState", play);
     }
-  });
+  }, [song, index, audioTrack, play]);
+
 
   const fetchsongData = async () => {
     const options = {
@@ -40,6 +107,7 @@ const Show = ({ play, setPlay, audioElement, query }) => {
       url: `${import.meta.env.VITE_WEB_URL}/api/search/songs`,
       params: { query: query },
     };
+    console.log(query);
     try {
       const { data } = await axios.request(options);
       setSongData(data.data.results);
@@ -48,6 +116,12 @@ const Show = ({ play, setPlay, audioElement, query }) => {
       console.error(error);
     }
   };
+
+  const debouncedFetchSongData = useRef(debounce(fetchsongData, 500)).current;
+
+  useEffect(() => {
+    debouncedFetchSongData();
+  }, [query]);
 
   const togglePlay = () => {
     setPlay(!play);
@@ -75,33 +149,23 @@ const Show = ({ play, setPlay, audioElement, query }) => {
   };
 
   const skipBack = async () => {
-    index = songData.findIndex((d) => d.id == song.id);
-    if (index == 0) {
-      setSong(songData[songData.length - 1]);
-    } else {
-      setSong(songData[index - 1]);
-    }
+    const newIndex = index === 0 ? songData.length - 1 : index - 1;
+    setIndex(newIndex);
+    setSong(songData[newIndex]);
 
     setAudioTrack({
-      progress:
-        (audioElement.current.currentTime = 0 / audioElement.current.duration) *
-        100,
+      progress: 0, // Reset progress when skipping back
       length: audioElement.current.duration,
     });
   };
 
   const skipForward = () => {
-    const index = songData.findIndex((d) => d.id == song.id);
-    if (index == songData.length - 1) {
-      setSong(songData[0]);
-    } else {
-      setSong(songData[index + 1]);
-    }
+    const newIndex = index === songData.length - 1 ? 0 : index + 1;
+    setIndex(newIndex);
+    setSong(songData[newIndex]);
 
     setAudioTrack({
-      progress:
-        (audioElement.current.currentTime = 0 / audioElement.current.duration) *
-        100,
+      progress: 0, // Reset progress when skipping forward
       length: audioElement.current.duration,
     });
   };
@@ -136,7 +200,7 @@ const Show = ({ play, setPlay, audioElement, query }) => {
       setAudioTrack({ ...audioTrack, progress: newProgress });
 
       // Update the current time of the audio element
-      const newCurrentTime = (clickOffsetX / barWidth) * audioTrack.length;
+      const newCurrentTime = (clickOffsetX / barWidth) * audioTrack?.length;
       audioElement.current.currentTime = newCurrentTime;
     } catch (error) {
       console.error("An error occurred while updating playbar:", error);
@@ -152,7 +216,7 @@ const Show = ({ play, setPlay, audioElement, query }) => {
           className="rounded-md w-[90%] sm:w-[25%] cursor-pointer"
         />
         <div className="flex flex-col items-start justify-center gap-4 w-fit">
-          <h4 className="font-bold text-5xl text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
+          <h4 className="font-bold text-3xl sm:text-5xl text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
             {song?.name}
           </h4>
           <p className="text-slate-600 dark:text-slate-400 text-lg w-[50%] mx-2 cursor-pointer">
@@ -170,7 +234,7 @@ const Show = ({ play, setPlay, audioElement, query }) => {
       <div className="fixed bottom-0 left-0 right-0 bg-white/50 dark:bg-white/10 backdrop-blur-sm flex flex-col items-center justify-center gap-2 py-4">
         <div className="relative w-full flex items-center justify-center group gap-2 py-2 px-6 sm:px-20 cursor-pointer z-50">
           <p className="text-xs font-semibold text-slate-700 dark:text-white">
-            {(audioTrack.progress / 60).toFixed(2) === "NaN"
+            {(audioTrack?.progress / 60).toFixed(2) === "NaN"
               ? ""
               : (audioElement.current.currentTime / 60).toFixed(2)}
           </p>
@@ -181,15 +245,15 @@ const Show = ({ play, setPlay, audioElement, query }) => {
           >
             <div
               className="w-full h-1 bg-slate-700 dark:bg-white group-hover:bg-slate-400 rounded-full absolute z-10 flex items-center justify-end"
-              style={{ left: `calc(${audioTrack.progress}% - 100%)` }}
+              style={{ left: `calc(${audioTrack?.progress}% - 100%)` }}
             >
               <div className="h-3 w-3 bg-transparent fixed group-hover:bg-slate-700 dark:group-hover:bg-white rounded-full z-20 cursor-pointer -mr-1.5" />
             </div>
           </div>
           <p className="text-xs font-semibold text-slate-700 dark:text-white">
-            {(audioTrack.length / 60).toFixed(2) === "NaN"
+            {(audioTrack?.length / 60).toFixed(2) === "NaN"
               ? ""
-              : (audioTrack.length / 60).toFixed(2)}
+              : (audioTrack?.length / 60).toFixed(2)}
           </p>
         </div>
         <div className="flex gap-2">
