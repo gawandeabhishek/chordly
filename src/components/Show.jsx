@@ -96,7 +96,6 @@ useEffect(() => {
       url: `${import.meta.env.VITE_WEB_URL}/api/search/songs`,
       params: { query: query },
     };
-    console.log(query);
     try {
       const { data } = await axios.request(options);
       setSongData(data.data.results);
@@ -261,7 +260,7 @@ useEffect(() => {
             onClick={togglePlay}
             className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
           >
-            {play ? <Pause className="text-rose-500" /> : <Play />}
+            {play ? <Pause className="text-cyan-700 dark:text-cyan-500" /> : <Play />}
           </div>
           <div
             className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
@@ -278,7 +277,7 @@ useEffect(() => {
             ) : forwd ? (
               <Shuffle className="text-slate-800 dark:text-slate-200" />
             ) : (
-              <Repeat className="text-pink-800 dark:text-rose-600" />
+              <Repeat className="text-teal-700 dark:text-teal-500" />
             )}
           </div>
         </div>

@@ -1,15 +1,11 @@
-import { Chrome, Home, Menu, Moon, Search, Sun, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
+import { Home, Menu, Moon, Search, Sun, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Header = ({ query, setQuery }) => {
   const [mode, setMode] = useState();
   const [showMenu, setShowMenu] = useState(false);
-
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
-  let location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
