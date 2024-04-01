@@ -50,7 +50,7 @@ To experience the demo, follow these simple steps:
     yarn dev
     ```
 
-4. **Open in Browser**: Once the server is running, open your preferred web browser and navigate to `http://localhost:3000` to view the demo.
+4. **Open in Browser**: Once the server is running, open your preferred web browser and navigate to `http://localhost:5173` to view the demo.
 
 ## Demo Video
 
