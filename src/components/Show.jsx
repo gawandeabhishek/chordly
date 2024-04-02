@@ -27,8 +27,8 @@ const Show = ({ play, setPlay, audioElement, query }) => {
   useEffect(() => {
     fetchsongData();
   }, [query]);
-  
-useEffect(() => {
+
+  useEffect(() => {
     if (play) {
       audioElement.current.play();
     } else {
@@ -58,9 +58,10 @@ useEffect(() => {
         setIndex(parseInt(savedIndex));
         setAudioTrack(savedAudioTrack);
         setPlay(savedAudioTrackState === "true");
-        
-          audioElement.current.currentTime = audioTrack.progress / 100 * audioTrack.length;
-          audioElement.current.play();
+
+        audioElement.current.currentTime =
+          (audioTrack.progress / 100) * audioTrack.length;
+        audioElement.current.play();
       } catch (error) {
         console.error("Error parsing saved song:", error);
         // Optionally handle the error here
@@ -88,7 +89,6 @@ useEffect(() => {
       localStorage.setItem("savedAudioTrackState", play);
     }
   }, [song, index, audioTrack, play]);
-
 
   const fetchsongData = async () => {
     const options = {
@@ -260,7 +260,11 @@ useEffect(() => {
             onClick={togglePlay}
             className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
           >
-            {play ? <Pause className="text-cyan-700 dark:text-cyan-500" /> : <Play />}
+            {play ? (
+              <Pause className="text-cyan-700 dark:text-cyan-500" />
+            ) : (
+              <Play />
+            )}
           </div>
           <div
             className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
