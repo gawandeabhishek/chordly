@@ -220,14 +220,14 @@ const Show = ({ play, setPlay, audioElement, query }) => {
         </div>
       </div>
       <div className="fixed bottom-0 left-0 right-0 bg-white/50 dark:bg-white/10 backdrop-blur-sm flex flex-col items-center justify-center gap-2 py-4">
-        <div className="relative w-full flex items-center justify-center group gap-2 py-2 px-6 sm:px-20 cursor-pointer z-50">
+        <div className="relative w-full flex items-center justify-center gap-2 py-2 px-6 sm:px-20 cursor-pointer z-50">
           <p className="text-xs font-semibold text-slate-700 dark:text-white">
             {(audioTrack?.progress / 60).toFixed(2) === "NaN"
               ? ""
               : (audioElement.current.currentTime / 60).toFixed(2)}
           </p>
           <div
-            className="w-full h-1 bg-gray-200 dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer"
+            className="w-full h-1 bg-gray-200 group dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer"
             ref={dragRef}
             onClick={updatePlaybar}
           >
