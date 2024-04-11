@@ -34,10 +34,10 @@ const Home = ({ setPlay, setQuery }) => {
               alt={data.name}
               className="rounded-md"
             />
-            <h4 className="font-bold text-slate-900 text-center w-fit dark:text-slate-50 mx-2">
+            <h4 className="font-bold text-slate-900 text-center w-fit dark:text-slate-50 mx-2 truncate">
               {data.name}
             </h4>
-            <p className="text-slate-600 dark:text-slate-400 text-center text-xs w-[90%] mx-2">
+            <p className="text-slate-600 dark:text-slate-400 text-center text-xs w-[90%] mx-2 truncate">
               {data.artists.primary.map((singers, idx) => (
                 <span key={idx}>{singers.name}<span>{  idx == data.artists.primary.length - 1 ? "" : ", "}</span></span>
               ))}

@@ -11,6 +11,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import debounce from "lodash/debounce";
 import axios from "axios";
+import he from 'he';
 
 const Show = ({ play, setPlay, audioElement, query }) => {
   const [song, setSong] = useState();
@@ -195,6 +196,11 @@ const Show = ({ play, setPlay, audioElement, query }) => {
     }
   };
 
+  const entites = {
+    '&#039;': "'",
+    '&quot;': '"',
+  };
+
   return (
     <div className="min-h-[calc(100vh-12rem)]">
       <div className="flex items-center justify-center flex-col sm:flex-row gap-10 sm:gap-20 mx-16 mt-8 mb-20 sm:m-16">
@@ -205,7 +211,7 @@ const Show = ({ play, setPlay, audioElement, query }) => {
         />
         <div className="flex flex-col items-start justify-center gap-4 w-fit">
           <h4 className="font-bold text-3xl sm:text-5xl text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
-            {song?.name}
+            {song ? he.decode(song.name) : null}
           </h4>
           <p className="text-slate-600 dark:text-slate-400 text-lg w-[50%] mx-2 cursor-pointer">
             {song?.artists.primary.map((singers, idx) => (
