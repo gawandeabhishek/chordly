@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const Home = ({ setPlay }) => {
+const Home = ({ setPlay, q}) => {
   const [tracks, setTracks] = useState();
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [q]);
 
   const fetchData = async () => {
     const options = {
       method: "GET",
       url: `${import.meta.env.VITE_WEB_URL}/api/search/songs`,
-      params: { query: "bollywood", limit: 100000 },
+      params: { query: q === "" ? "bollywood" : q, limit: 100000 },
     };
 
     try {
