@@ -2,11 +2,13 @@ import axios from "axios";
 import { Home, Menu, Moon, Search, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useRef } from "react";
 
-const Header = () => {
+const Header = ({ setQ }) => {
   const [mode, setMode] = useState();
   const [showMenu, setShowMenu] = useState(false);
   const [query, setQuery] = useState();
+  const inputRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,36 +57,38 @@ const Header = () => {
       // Programmatically click on the link when Enter key is pressed
       document.getElementById("searchLink").click();
       setShowMenu(false);
-      event.target.value = "";
+      inputRef.current.value = ""; 
     }
   };
 
-  const getQuery = (e) => {
-    setQuery(e.target.value);
+  const getQuery = () => {
+    setQuery(inputRef.current.value);
+    setQ(inputRef.current.value);
   };
 
-  const handleLinkClick = (event) => {
-    setQuery(query);
-    window.location.href = `/show/${query}`;
-    event.target.value = "";
+  const handleLinkClick = () => {
+    setShowMenu(false);
+    inputRef.current.value = "";
   };
 
   return (
     <div className="sticky left-0 top-0 right-0 flex justify-between items-center px-10 bg-white/50 dark:bg-white/10 backdrop-blur-sm h-14 w-full">
       <div className="sm:flex gap-4 items-center hidden">
-        <Link to={"/"}>
+        <Link to={"/"} onClick={() => {window.location.href = `/`; setQ("")}}>
           <Home className="text-slate-800 dark:text-slate-300 cursor-pointer" />
         </Link>
 
-        <Link to={`/show/${query}`} id="searchLink" onClick={handleLinkClick}>
+        <button onClick={handleLinkClick} id="searchLink">
           <Search className="cursor-pointer text-slate-800 dark:text-slate-300" />
-        </Link>
+        </button>
         <input
+          ref={inputRef}
           type="text"
           className="rounded-full outline-none px-4 py-2 w-[100%] placeholder:text-slate-600 dark:placeholder:text-slate-400 text-slate-800 dark:text-slate-300 bg-white dark:bg-black drop-shadow-2xl"
           placeholder="search song"
           onChange={getQuery}
           onKeyDown={handleKeyPress}
+          name="searchBox"
         />
       </div>
       <div className="flex gap-4 w-full sm:w-max justify-between sm:justify-normal items-center">
