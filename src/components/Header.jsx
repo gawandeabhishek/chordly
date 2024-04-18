@@ -8,7 +8,7 @@ const Header = ({ setQ }) => {
   const [mode, setMode] = useState();
   const [showMenu, setShowMenu] = useState(false);
   const [query, setQuery] = useState();
-  const inputRef = useRef(null);
+  const inputRefs = useRef([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,21 +54,32 @@ const Header = ({ setQ }) => {
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      // Programmatically click on the link when Enter key is pressed
-      document.getElementById("searchLink").click();
       setShowMenu(false);
-      inputRef.current.value = "";
+      inputRefs.current.forEach((ref) => {
+        if (ref.current) {
+          ref.current.value = "";
+        }
+      });
     }
   };
 
   const getQuery = () => {
-    setQuery(inputRef.current.value);
-    setQ(inputRef.current.value);
+    setQuery(inputRefs.current[0].value);
+    setQ(inputRefs.current[0].value);
+  };
+
+  const getQueryMob = () => {
+    setQuery(inputRefs.current[1].value);
+    setQ(inputRefs.current[1].value);
   };
 
   const handleLinkClick = () => {
     setShowMenu(false);
-    inputRef.current.value = "";
+    inputRefs.current.forEach((ref) => {
+      if (ref.current) {
+        ref.current.value = "";
+      }
+    });
   };
 
   return (
@@ -84,11 +95,11 @@ const Header = ({ setQ }) => {
           <Home className="text-slate-800 dark:text-slate-300 cursor-pointer" />
         </Link>
 
-        <button onClick={handleLinkClick} id="searchLink">
+        <button onClick={handleLinkClick}>
           <Search className="cursor-pointer text-slate-800 dark:text-slate-300" />
         </button>
         <input
-          ref={inputRef}
+          ref={(el) => (inputRefs.current[0] = el)}
           type="text"
           className="rounded-full outline-none px-4 py-2 w-[100%] placeholder:text-slate-600 dark:placeholder:text-slate-400 text-slate-800 dark:text-slate-300 bg-white dark:bg-black drop-shadow-2xl"
           placeholder="search song"
@@ -152,15 +163,15 @@ const Header = ({ setQ }) => {
             </p>
           </Link>
           <div className="flex items-center justify-center gap-4">
-            <button onClick={handleLinkClick} id="searchLink">
+            <button onClick={handleLinkClick} id>
               <Search className="cursor-pointer text-slate-800 dark:text-slate-300" />
             </button>
             <input
-              ref={inputRef}
+              ref={(el) => (inputRefs.current[1] = el)}
               type="text"
               className="rounded-full outline-none px-4 py-2 w-[100%] placeholder:text-slate-600 dark:placeholder:text-slate-400 text-slate-800 dark:text-slate-300 bg-white dark:bg-black drop-shadow-2xl"
               placeholder="search song"
-              onChange={getQuery}
+              onChange={getQueryMob}
               onKeyDown={handleKeyPress}
               name="searchBox"
             />
