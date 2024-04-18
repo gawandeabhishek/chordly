@@ -3,9 +3,10 @@ import { Home, Menu, Moon, Search, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const Header = ({ query, setQuery }) => {
+const Header = () => {
   const [mode, setMode] = useState();
   const [showMenu, setShowMenu] = useState(false);
+  const [query, setQuery] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,6 +65,7 @@ const Header = ({ query, setQuery }) => {
 
   const handleLinkClick = (event) => {
     setQuery(query);
+    window.location.href = `/show/${query}`;
     event.target.value = "";
   };
 
@@ -74,7 +76,7 @@ const Header = ({ query, setQuery }) => {
           <Home className="text-slate-800 dark:text-slate-300 cursor-pointer" />
         </Link>
 
-        <Link to="/show/song" id="searchLink" onClick={handleLinkClick}>
+        <Link to={`/show/${query}`} id="searchLink" onClick={handleLinkClick}>
           <Search className="cursor-pointer text-slate-800 dark:text-slate-300" />
         </Link>
         <input
