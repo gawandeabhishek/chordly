@@ -56,8 +56,8 @@ const Header = ({ setQ }) => {
     if (event.key === "Enter") {
       setShowMenu(false);
       inputRefs.current.forEach((ref) => {
-        if (ref.current) {
-          ref.current.value = "";
+        if (ref) {
+          ref.value = "";
         }
       });
     }
@@ -76,8 +76,8 @@ const Header = ({ setQ }) => {
   const handleLinkClick = () => {
     setShowMenu(false);
     inputRefs.current.forEach((ref) => {
-      if (ref.current) {
-        ref.current.value = "";
+      if (ref) {
+        ref.value = "";
       }
     });
   };
