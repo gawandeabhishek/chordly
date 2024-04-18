@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import he from "he";
 
-const Home = ({ setPlay, q}) => {
+const Home = ({ setPlay, q }) => {
   const [tracks, setTracks] = useState();
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const Home = ({ setPlay, q}) => {
               className="rounded-md"
             />
             <h4 className="font-bold text-slate-900 text-center w-fit dark:text-slate-50 mx-2">
-              {data.name}
+              {he.decode(data.name)}
             </h4>
             <p className="text-slate-600 dark:text-slate-400 text-center text-xs w-[90%] mx-2">
               {data.artists.primary.map((singers, idx) => (

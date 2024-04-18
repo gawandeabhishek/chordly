@@ -11,6 +11,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import debounce from "lodash/debounce";
 import axios from "axios";
+import he from "he";
 
 const Show = ({ play, setPlay, audioElement }) => {
   const [song, setSong] = useState();
@@ -26,8 +27,8 @@ const Show = ({ play, setPlay, audioElement }) => {
   useEffect(() => {
     fetchsongData();
   }, [id]);
-  
-useEffect(() => {
+
+  useEffect(() => {
     if (play) {
       audioElement.current.play();
     } else {
@@ -57,9 +58,10 @@ useEffect(() => {
         setIndex(parseInt(savedIndex));
         setAudioTrack(savedAudioTrack);
         setPlay(savedAudioTrackState === "true");
-        
-          audioElement.current.currentTime = audioTrack.progress / 100 * audioTrack.length;
-          audioElement.current.play();
+
+        audioElement.current.currentTime =
+          (audioTrack.progress / 100) * audioTrack.length;
+        audioElement.current.play();
       } catch (error) {
         console.error("Error parsing saved song:", error);
         // Optionally handle the error here
@@ -87,7 +89,6 @@ useEffect(() => {
       localStorage.setItem("savedAudioTrackState", play);
     }
   }, [song, index, audioTrack, play]);
-
 
   const fetchsongData = async () => {
     const options = {
@@ -204,7 +205,7 @@ useEffect(() => {
         />
         <div className="flex flex-col items-start justify-center gap-4 w-fit">
           <h4 className="font-bold text-3xl sm:text-5xl text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
-            {song?.name}
+            {song ? he.decode(song.name) : null}
           </h4>
           <p className="text-slate-600 dark:text-slate-400 text-lg w-[50%] mx-2 cursor-pointer">
             {song?.artists.primary.map((singers, idx) => (
@@ -259,7 +260,11 @@ useEffect(() => {
             onClick={togglePlay}
             className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
           >
-            {play ? <Pause className="text-cyan-700 dark:text-cyan-500" /> : <Play />}
+            {play ? (
+              <Pause className="text-cyan-700 dark:text-cyan-500" />
+            ) : (
+              <Play />
+            )}
           </div>
           <div
             className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
