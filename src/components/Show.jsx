@@ -12,21 +12,20 @@ import { useParams, useNavigate } from "react-router-dom";
 import debounce from "lodash/debounce";
 import axios from "axios";
 
-const Show = ({ play, setPlay, audioElement, query }) => {
+const Show = ({ play, setPlay, audioElement }) => {
   const [song, setSong] = useState();
   const [songData, setSongData] = useState();
   const [audioTrack, setAudioTrack] = useState();
+  const { id } = useParams();
   const [isLoop, setIsLoop] = useState(false);
   const [forwd, setForwd] = useState(true);
   const [onceLoop, setOnceLoop] = useState(false);
   const [index, setIndex] = useState(0);
   const dragRef = useRef();
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     fetchsongData();
-  }, [query]);
+  }, [id]);
 
   useEffect(() => {
     if (play) {
@@ -94,7 +93,7 @@ const Show = ({ play, setPlay, audioElement, query }) => {
     const options = {
       method: "GET",
       url: `${import.meta.env.VITE_WEB_URL}/api/search/songs`,
-      params: { query: query },
+      params: { query: id },
     };
     try {
       const { data } = await axios.request(options);
@@ -109,7 +108,7 @@ const Show = ({ play, setPlay, audioElement, query }) => {
 
   useEffect(() => {
     debouncedFetchSongData();
-  }, [query]);
+  }, [id]);
 
   const togglePlay = () => {
     setPlay(!play);
