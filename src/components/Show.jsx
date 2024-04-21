@@ -5,7 +5,7 @@ import {
   Repeat1,
   Shuffle,
   SkipBack,
-  SkipForward,
+  SkipForward, 
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
