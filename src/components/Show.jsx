@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   Pause,
   Play,
@@ -13,7 +13,7 @@ import debounce from "lodash/debounce";
 import axios from "axios";
 import he from "he";
 
-const Show = ({ play, setPlay, audioElement }) => {
+const Show = ({ play, setPlay, audioElement, q }) => {
   const [song, setSong] = useState();
   const [songData, setSongData] = useState();
   const [audioTrack, setAudioTrack] = useState();
@@ -24,6 +24,26 @@ const Show = ({ play, setPlay, audioElement }) => {
   const [index, setIndex] = useState(0);
   const dragRef = useRef();
   const navigate = useNavigate();
+  const [tracks, setTracks] = useState();
+
+  useEffect(() => {
+    fetchData();
+  }, [q]);
+
+  const fetchData = async () => {
+    const options = {
+      method: "GET",
+      url: `${import.meta.env.VITE_WEB_URL}/api/search/songs`,
+      params: { query: q === "" ? "bollywood" : q, limit: 100000 },
+    };
+
+    try {
+      const { data } = await axios.request(options);
+      setTracks(data.data.results);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     fetchsongData();
@@ -36,7 +56,7 @@ const Show = ({ play, setPlay, audioElement }) => {
       audioElement.current.pause();
     }
   }, [play]); // Only run this effect when the `play` state changes
-  
+
   useEffect(() => {
     // Retrieve the song string from localStorage
     const savedSongString = localStorage.getItem("savedQuery");
@@ -44,7 +64,7 @@ const Show = ({ play, setPlay, audioElement }) => {
     const savedAudioTrackString = localStorage.getItem("savedAudioTrack");
     const savedIndex = localStorage.getItem("savedIndex");
     const savedAudioTrackState = localStorage.getItem("savedAudioTrackState");
-  
+
     // Check if all necessary data is available in localStorage
     if (
       savedSongString &&
@@ -57,16 +77,20 @@ const Show = ({ play, setPlay, audioElement }) => {
         const savedSong = JSON.parse(savedSongString);
         const savedSongData = JSON.parse(savedSongDataString);
         const savedAudioTrack = JSON.parse(savedAudioTrackString);
-  
+
         // Set the retrieved data into state variables
         setSong(savedSong);
         setSongData(savedSongData);
         setIndex(parseInt(savedIndex));
         setAudioTrack(savedAudioTrack);
         setPlay(savedAudioTrackState === "true");
-  
+
         // Ensure audioTrack is defined before accessing its properties
-        if (savedAudioTrack && savedAudioTrack.progress !== undefined && savedAudioTrack.length !== undefined) {
+        if (
+          savedAudioTrack &&
+          savedAudioTrack.progress !== undefined &&
+          savedAudioTrack.length !== undefined
+        ) {
           audioElement.current.currentTime =
             (savedAudioTrack.progress / 100) * savedAudioTrack.length;
           audioElement.current.play();
@@ -80,7 +104,7 @@ const Show = ({ play, setPlay, audioElement }) => {
       }
     }
   }, []); // Run this effect only once, on component mount
-  
+
   useEffect(() => {
     // Convert the song object to a string using JSON.stringify
     const songString = JSON.stringify(song);
@@ -237,97 +261,136 @@ const Show = ({ play, setPlay, audioElement }) => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-12rem)]">
-      <div className="flex items-center justify-center flex-col sm:flex-row gap-10 sm:gap-20 mx-16 mt-8 mb-20 sm:m-16">
-        <img
-          src={song?.image[song?.image.length - 1].url}
-          alt={song?.name}
-          className="rounded-md w-[90%] sm:w-[25%] cursor-pointer"
-        />
-        <div className="flex flex-col items-start justify-center gap-4 w-fit">
-          <h4 className="font-bold text-3xl sm:text-5xl text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
-            {song ? he.decode(song.name) : null}
-          </h4>
-          <p className="text-slate-600 dark:text-slate-400 text-lg w-[50%] mx-2 cursor-pointer">
-            {song?.artists.primary.map((singers, idx) => (
-              <span key={idx}>
-                {singers.name}
-                <span>
-                  {idx == song?.artists.primary.length - 1 ? "" : ", "}
-                </span>
-              </span>
-            ))}
-          </p>
-        </div>
-      </div>
-      <div className="fixed bottom-0 left-0 right-0 bg-white/50 dark:bg-white/10 backdrop-blur-sm flex flex-col items-center justify-center gap-2 py-4">
-        <div className="relative w-full flex items-center justify-center gap-2 py-2 px-6 sm:px-20 cursor-pointer z-50">
-          <p className="text-xs font-semibold text-slate-700 dark:text-white">
-            {(audioTrack?.progress / 60).toFixed(2) === "NaN"
-              ? ""
-              : (audioElement.current.currentTime / 60).toFixed(2)}
-          </p>
-          <div
-            className="w-full h-1 bg-gray-200 group dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer"
-            ref={dragRef}
-            onClick={updatePlaybar}
-          >
-            <div
-              className="w-full h-1 bg-slate-700 dark:bg-white group-hover:bg-slate-400 rounded-full absolute z-10 flex items-center justify-end"
-              style={{ left: `calc(${audioTrack?.progress}% - 100%)` }}
-            >
-              <div className="h-3 w-3 bg-transparent fixed group-hover:bg-slate-700 dark:group-hover:bg-white rounded-full z-20 cursor-pointer -mr-1.5" />
+    <>
+      {q === "" ? (
+        <div className="min-h-[calc(100vh-12rem)]">
+          <div className="flex items-center justify-center flex-col sm:flex-row gap-10 sm:gap-20 mx-16 mt-8 mb-20 sm:m-16">
+            <img
+              src={song?.image[song?.image.length - 1].url}
+              alt={song?.name}
+              className="rounded-md w-[90%] sm:w-[25%] cursor-pointer"
+            />
+            <div className="flex flex-col items-start justify-center gap-4 w-fit">
+              <h4 className="font-bold text-3xl sm:text-5xl text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
+                {song ? he.decode(song.name) : null}
+              </h4>
+              <p className="text-slate-600 dark:text-slate-400 text-lg w-[50%] mx-2 cursor-pointer">
+                {song?.artists.primary.map((singers, idx) => (
+                  <span key={idx}>
+                    {singers.name}
+                    <span>
+                      {idx == song?.artists.primary.length - 1 ? "" : ", "}
+                    </span>
+                  </span>
+                ))}
+              </p>
             </div>
           </div>
-          <p className="text-xs font-semibold text-slate-700 dark:text-white">
-            {(audioTrack?.length / 60).toFixed(2) === "NaN"
-              ? ""
-              : (audioTrack?.length / 60).toFixed(2)}
-          </p>
+          <div className="fixed bottom-0 left-0 right-0 bg-white/50 dark:bg-white/10 backdrop-blur-sm flex flex-col items-center justify-center gap-2 py-4">
+            <div className="relative w-full flex items-center justify-center gap-2 py-2 px-6 sm:px-20 cursor-pointer z-50">
+              <p className="text-xs font-semibold text-slate-700 dark:text-white">
+                {(audioTrack?.progress / 60).toFixed(2) === "NaN"
+                  ? ""
+                  : (audioElement.current.currentTime / 60).toFixed(2)}
+              </p>
+              <div
+                className="w-full h-1 bg-gray-200 group dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer"
+                ref={dragRef}
+                onClick={updatePlaybar}
+              >
+                <div
+                  className="w-full h-1 bg-slate-700 dark:bg-white group-hover:bg-slate-400 rounded-full absolute z-10 flex items-center justify-end"
+                  style={{ left: `calc(${audioTrack?.progress}% - 100%)` }}
+                >
+                  <div className="h-3 w-3 bg-transparent fixed group-hover:bg-slate-700 dark:group-hover:bg-white rounded-full z-20 cursor-pointer -mr-1.5" />
+                </div>
+              </div>
+              <p className="text-xs font-semibold text-slate-700 dark:text-white">
+                {(audioTrack?.length / 60).toFixed(2) === "NaN"
+                  ? ""
+                  : (audioTrack?.length / 60).toFixed(2)}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <audio
+                src={song?.downloadUrl[song?.downloadUrl.length - 1].url}
+                ref={audioElement}
+                onTimeUpdate={onPlaying}
+              />
+              <div
+                className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
+                onClick={skipBack}
+              >
+                <SkipBack />
+              </div>
+              <div
+                onClick={togglePlay}
+                className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
+              >
+                {play ? (
+                  <Pause className="text-cyan-700 dark:text-cyan-500" />
+                ) : (
+                  <Play />
+                )}
+              </div>
+              <div
+                className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
+                onClick={skipForward}
+              >
+                <SkipForward />
+              </div>
+              <div
+                className="bg-slate-500/10 p-2 rounded-full cursor-pointer"
+                onClick={setConditions}
+              >
+                {isLoop ? (
+                  <Repeat1 className="text-cyan-700 dark:text-cyan-500" />
+                ) : forwd ? (
+                  <Shuffle className="text-slate-800 dark:text-slate-200" />
+                ) : (
+                  <Repeat className="text-teal-700 dark:text-teal-500" />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <audio
-            src={song?.downloadUrl[song?.downloadUrl.length - 1].url}
-            ref={audioElement}
-            onTimeUpdate={onPlaying}
-          />
-          <div
-            className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
-            onClick={skipBack}
-          >
-            <SkipBack />
-          </div>
-          <div
-            onClick={togglePlay}
-            className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
-          >
-            {play ? (
-              <Pause className="text-cyan-700 dark:text-cyan-500" />
-            ) : (
-              <Play />
-            )}
-          </div>
-          <div
-            className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
-            onClick={skipForward}
-          >
-            <SkipForward />
-          </div>
-          <div
-            className="bg-slate-500/10 p-2 rounded-full cursor-pointer"
-            onClick={setConditions}
-          >
-            {isLoop ? (
-              <Repeat1 className="text-cyan-700 dark:text-cyan-500" />
-            ) : forwd ? (
-              <Shuffle className="text-slate-800 dark:text-slate-200" />
-            ) : (
-              <Repeat className="text-teal-700 dark:text-teal-500" />
-            )}
-          </div>
+      ) : (
+        <div className="mx-10 mb-10 min-h-[calc(100vh-10rem)] m-2 flex flex-wrap gap-4 items-center justify-around">
+          {tracks?.map((data, idx) => (
+            <Link
+              to={`/show/${data.name}`}
+              onClick={() => {
+                setPlay(true);
+                history.push(`/show/${data.name}`)
+                location.reload();
+              }}
+              key={idx}
+            >
+              <div className="w-48 h-[20rem] p-2 rounded-md bg-white dark:bg-slate-900/20 gap-2 flex flex-col items-center justify-start cursor-pointer hover:p-2 transition-all">
+                <img
+                  src={data.image[data.image.length - 1].url}
+                  alt={data.name}
+                  className="rounded-md"
+                />
+                <h4 className="font-bold text-slate-900 text-center w-fit dark:text-slate-50 mx-2">
+                  {he.decode(data.name)}
+                </h4>
+                <p className="text-slate-600 dark:text-slate-400 text-center text-xs w-[90%] mx-2 truncate">
+                  {data.artists.primary.map((singers, idx) => (
+                    <span key={idx}>
+                      {singers.name}
+                      <span>
+                        {idx == data.artists.primary.length - 1 ? "" : ", "}
+                      </span>
+                    </span>
+                  ))}
+                </p>
+              </div>
+            </Link>
+          ))}
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 

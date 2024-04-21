@@ -32,6 +32,8 @@ const Home = ({ setPlay, q }) => {
           to={`/show/${data.name}`}
           onClick={() => {
             setPlay(true);
+            history.push(`/show/${data.name}`);
+            location.reload();
           }}
           key={idx}
         >
@@ -41,8 +43,7 @@ const Home = ({ setPlay, q }) => {
               alt={data.name}
               className="rounded-md"
             />
-=======
-            <h4 className="font-bold text-slate-900 text-center w-fit dark:text-slate-50 mx-2 truncate">
+            <h4 className="font-bold text-slate-900 text-center w-fit dark:text-slate-50 mx-2">
               {he.decode(data.name)}
             </h4>
             <p className="text-slate-600 dark:text-slate-400 text-center text-xs w-[90%] mx-2 truncate">
