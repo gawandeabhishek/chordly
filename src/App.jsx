@@ -19,7 +19,7 @@ const App = () => {
           <Route index element={<Home setPlay={setPlay} q={q} />} />
         </Route>
         <Route path="/user" element={<User />} />
-        <Route path="/show/:id" element={<Show play={play} setPlay={setPlay} audioElement={audioElement} />} />
+        <Route path="/show/:id" element={<Show play={play} setPlay={setPlay} audioElement={audioElement} q={q} />} />
       </Routes>
       <Footer />
     </div>
