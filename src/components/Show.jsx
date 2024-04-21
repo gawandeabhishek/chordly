@@ -1,3 +1,4 @@
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Pause,
   Play,
@@ -5,12 +6,12 @@ import {
   Repeat1,
   Shuffle,
   SkipBack,
-  SkipForward, 
+  SkipForward,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import debounce from "lodash/debounce";
 import axios from "axios";
+import he from "he";
 
 const Show = ({ play, setPlay, audioElement }) => {
   const [song, setSong] = useState();
@@ -22,6 +23,7 @@ const Show = ({ play, setPlay, audioElement }) => {
   const [onceLoop, setOnceLoop] = useState(false);
   const [index, setIndex] = useState(0);
   const dragRef = useRef();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchsongData();
@@ -33,7 +35,8 @@ const Show = ({ play, setPlay, audioElement }) => {
     } else {
       audioElement.current.pause();
     }
-  });
+  }, [play]); // Only run this effect when the `play` state changes
+  
   useEffect(() => {
     // Retrieve the song string from localStorage
     const savedSongString = localStorage.getItem("savedQuery");
@@ -41,6 +44,8 @@ const Show = ({ play, setPlay, audioElement }) => {
     const savedAudioTrackString = localStorage.getItem("savedAudioTrack");
     const savedIndex = localStorage.getItem("savedIndex");
     const savedAudioTrackState = localStorage.getItem("savedAudioTrackState");
+  
+    // Check if all necessary data is available in localStorage
     if (
       savedSongString &&
       savedIndex !== null &&
@@ -52,22 +57,30 @@ const Show = ({ play, setPlay, audioElement }) => {
         const savedSong = JSON.parse(savedSongString);
         const savedSongData = JSON.parse(savedSongDataString);
         const savedAudioTrack = JSON.parse(savedAudioTrackString);
+  
+        // Set the retrieved data into state variables
         setSong(savedSong);
         setSongData(savedSongData);
         setIndex(parseInt(savedIndex));
         setAudioTrack(savedAudioTrack);
         setPlay(savedAudioTrackState === "true");
-
-        audioElement.current.currentTime =
-          (audioTrack.progress / 100) * audioTrack.length;
-        audioElement.current.play();
+  
+        // Ensure audioTrack is defined before accessing its properties
+        if (savedAudioTrack && savedAudioTrack.progress !== undefined && savedAudioTrack.length !== undefined) {
+          audioElement.current.currentTime =
+            (savedAudioTrack.progress / 100) * savedAudioTrack.length;
+          audioElement.current.play();
+        } else {
+          // Handle the case where the saved audio track data is incomplete or missing
+          console.error("Saved audio track data is incomplete or missing");
+        }
       } catch (error) {
         console.error("Error parsing saved song:", error);
         // Optionally handle the error here
       }
     }
-  }, [!audioTrack]);
-
+  }, []); // Run this effect only once, on component mount
+  
   useEffect(() => {
     // Convert the song object to a string using JSON.stringify
     const songString = JSON.stringify(song);
@@ -135,26 +148,50 @@ const Show = ({ play, setPlay, audioElement }) => {
     }
   };
 
+  useEffect(() => {
+    if (song && song.id) {
+      fetchSuggestions(song.id);
+    }
+  }, [song]);
+
+  const fetchSuggestions = async (songId) => {
+    if (!songId) {
+      console.error("No song ID found.");
+      return null;
+    }
+    const options = {
+      method: "GET",
+      url: `https://saavn.dev/api/songs/${songId}/suggestions`,
+    };
+    try {
+      const { data } = await axios.request(options);
+      if (data && data.data) {
+        setSongData(data.data);
+        return data.data;
+      } else {
+        console.error("No suggestions data found.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+      return null;
+    }
+  };
+
   const skipBack = async () => {
     const newIndex = index === 0 ? songData.length - 1 : index - 1;
     setIndex(newIndex);
     setSong(songData[newIndex]);
-
-    setAudioTrack({
-      progress: 0, // Reset progress when skipping back
-      length: audioElement.current.duration,
-    });
+    navigate(`/show/${songData[newIndex].name}`);
+    location.reload();
   };
 
-  const skipForward = () => {
+  const skipForward = async () => {
     const newIndex = index === songData.length - 1 ? 0 : index + 1;
     setIndex(newIndex);
     setSong(songData[newIndex]);
-
-    setAudioTrack({
-      progress: 0, // Reset progress when skipping forward
-      length: audioElement.current.duration,
-    });
+    navigate(`/show/${songData[newIndex].name}`);
+    location.reload();
   };
 
   let setConditions = () => {
@@ -195,8 +232,8 @@ const Show = ({ play, setPlay, audioElement }) => {
   };
 
   const entites = {
-    '&#039;': "'",
-    '&quot;': '"',
+    "&#039;": "'",
+    "&quot;": '"',
   };
 
   return (
