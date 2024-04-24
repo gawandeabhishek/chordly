@@ -39,7 +39,7 @@ const Show = ({ play, setPlay, audioElement, q }) => {
 
     try {
       const { data } = await axios.request(options);
-      setTracks(data.data.results);
+      setTracks(data?.data?.results);
     } catch (error) {
       console.error(error);
     }
@@ -134,8 +134,8 @@ const Show = ({ play, setPlay, audioElement, q }) => {
     };
     try {
       const { data } = await axios.request(options);
-      setSongData(data.data.results);
-      setSong(data.data.results[index]);
+      setSongData(data?.data?.results);
+      setSong(data?.data?.results[index]);
     } catch (error) {
       console.error(error);
     }
@@ -173,8 +173,8 @@ const Show = ({ play, setPlay, audioElement, q }) => {
   };
 
   useEffect(() => {
-    if (song && song.id) {
-      fetchSuggestions(song.id);
+    if (song && song?.id) {
+      fetchSuggestions(song?.id);
     }
   }, [song]);
 
@@ -189,9 +189,9 @@ const Show = ({ play, setPlay, audioElement, q }) => {
     };
     try {
       const { data } = await axios.request(options);
-      if (data && data.data) {
-        setSongData(data.data);
-        return data.data;
+      if (data && data?.data) {
+        setSongData(data?.data);
+        return data?.data;
       } else {
         console.error("No suggestions data found.");
         return null;
@@ -203,18 +203,18 @@ const Show = ({ play, setPlay, audioElement, q }) => {
   };
 
   const skipBack = async () => {
-    const newIndex = index === 0 ? songData.length - 1 : index - 1;
+    const newIndex = index === 0 ? songData?.length - 1 : index - 1;
     setIndex(newIndex);
     setSong(songData[newIndex]);
-    navigate(`/show/${songData[newIndex].name}`);
+    navigate(`/show/${songData[newIndex]?.name}`);
     location.reload();
   };
 
   const skipForward = async () => {
-    const newIndex = index === songData.length - 1 ? 0 : index + 1;
+    const newIndex = index === songData?.length - 1 ? 0 : index + 1;
     setIndex(newIndex);
     setSong(songData[newIndex]);
-    navigate(`/show/${songData[newIndex].name}`);
+    navigate(`/show/${songData[newIndex]?.name}`);
     location.reload();
   };
 
@@ -266,20 +266,20 @@ const Show = ({ play, setPlay, audioElement, q }) => {
         <div className="min-h-[calc(100vh-12rem)]">
           <div className="flex items-center justify-center flex-col sm:flex-row gap-10 sm:gap-20 mx-16 mt-8 mb-20 sm:m-16">
             <img
-              src={song?.image[song?.image.length - 1].url}
+              src={song?.image[song?.image?.length - 1]?.url}
               alt={song?.name}
               className="rounded-md w-[90%] sm:w-[25%] cursor-pointer"
             />
             <div className="flex flex-col items-start justify-center gap-4 w-fit">
               <h4 className="font-bold text-3xl sm:text-5xl text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
-                {song ? he.decode(song.name) : null}
+                {song ? he.decode(song?.name) : null}
               </h4>
               <p className="text-slate-600 dark:text-slate-400 text-lg w-[50%] mx-2 cursor-pointer">
-                {song?.artists.primary.map((singers, idx) => (
+                {song?.artists?.primary?.map((singers, idx) => (
                   <span key={idx}>
-                    {singers.name}
+                    {singers?.name}
                     <span>
-                      {idx == song?.artists.primary.length - 1 ? "" : ", "}
+                      {idx == song?.artists?.primary?.length - 1 ? "" : ", "}
                     </span>
                   </span>
                 ))}
@@ -291,7 +291,7 @@ const Show = ({ play, setPlay, audioElement, q }) => {
               <p className="text-xs font-semibold text-slate-700 dark:text-white">
                 {(audioTrack?.progress / 60).toFixed(2) === "NaN"
                   ? ""
-                  : (audioElement.current.currentTime / 60).toFixed(2)}
+                  : (audioElement?.current?.currentTime / 60).toFixed(2)}
               </p>
               <div
                 className="w-full h-1 bg-gray-200 group dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer"
@@ -313,7 +313,7 @@ const Show = ({ play, setPlay, audioElement, q }) => {
             </div>
             <div className="flex gap-2">
               <audio
-                src={song?.downloadUrl[song?.downloadUrl.length - 1].url}
+                src={song?.downloadUrl[song?.downloadUrl?.length - 1].url}
                 ref={audioElement}
                 onTimeUpdate={onPlaying}
               />
@@ -358,29 +358,28 @@ const Show = ({ play, setPlay, audioElement, q }) => {
         <div className="mx-10 mb-10 min-h-[calc(100vh-10rem)] m-2 flex flex-wrap gap-4 items-center justify-around">
           {tracks?.map((data, idx) => (
             <Link
-              to={`/show/${data.name}`}
+              to={`/show/${data?.name}`}
               onClick={() => {
                 setPlay(true);
-                history.push(`/show/${data.name}`)
-                location.reload();
+                history.push(`/show/${data?.name}`)
               }}
               key={idx}
             >
               <div className="w-48 h-[20rem] p-2 rounded-md bg-white dark:bg-slate-900/20 gap-2 flex flex-col items-center justify-start cursor-pointer hover:p-2 transition-all">
                 <img
-                  src={data.image[data.image.length - 1].url}
-                  alt={data.name}
+                  src={data?.image[data.image.length - 1]?.url}
+                  alt={data?.name}
                   className="rounded-md"
                 />
                 <h4 className="font-bold text-slate-900 text-center w-fit dark:text-slate-50 mx-2">
-                  {he.decode(data.name)}
+                  {he.decode(data?.name)}
                 </h4>
                 <p className="text-slate-600 dark:text-slate-400 text-center text-xs w-[90%] mx-2 truncate">
-                  {data.artists.primary.map((singers, idx) => (
+                  {data?.artists?.primary?.map((singers, idx) => (
                     <span key={idx}>
-                      {singers.name}
+                      {singers?.name}
                       <span>
-                        {idx == data.artists.primary.length - 1 ? "" : ", "}
+                        {idx == data?.artists?.primary?.length - 1 ? "" : ", "}
                       </span>
                     </span>
                   ))}
