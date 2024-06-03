@@ -13,14 +13,8 @@ import debounce from "lodash/debounce";
 import axios from "axios";
 import he from "he";
 
-const Show = ({ play, setPlay, audioElement, q }) => {
-  const [song, setSong] = useState();
-  const [songData, setSongData] = useState();
-  const [audioTrack, setAudioTrack] = useState();
+const Show = ({ play, setPlay, song, setSong, audioTrack, isLoop, setIsLoop, forwd, setForwd, onceLoop, setOnceLoop, setAudioTrack, songData, setSongData, audioElement, q }) => {
   const { id } = useParams();
-  const [isLoop, setIsLoop] = useState(false);
-  const [forwd, setForwd] = useState(true);
-  const [onceLoop, setOnceLoop] = useState(false);
   const [index, setIndex] = useState(0);
   const dragRef = useRef();
   const navigate = useNavigate();
@@ -127,15 +121,12 @@ const Show = ({ play, setPlay, audioElement, q }) => {
   }, [song, index, audioTrack, play]);
 
   const fetchsongData = async () => {
-    const options = {
-      method: "GET",
-      url: `${import.meta.env.VITE_WEB_URL}/api/search/songs`,
-      params: { query: id },
-    };
+    const options = { method: "GET", url: `https://saavn.dev/api/songs/${id}` };
+
     try {
       const { data } = await axios.request(options);
-      setSongData(data?.data?.results);
-      setSong(data?.data?.results[index]);
+      setSongData(data.data[0]);
+      setSong(data.data[0]);
     } catch (error) {
       console.error(error);
     }
@@ -149,27 +140,6 @@ const Show = ({ play, setPlay, audioElement, q }) => {
 
   const togglePlay = () => {
     setPlay(!play);
-  };
-
-  const onPlaying = () => {
-    const duration = audioElement.current.duration;
-    const currentTime = audioElement.current.currentTime;
-
-    setAudioTrack({
-      progress: (currentTime / duration) * 100,
-      length: duration,
-    });
-    if (currentTime == duration && isLoop) {
-      audioElement.current.currentTime = 0;
-    } else if (currentTime == duration && onceLoop) {
-      audioElement.current.currentTime = 0;
-      setOnceLoop(false);
-      setForwd(true);
-      setIsLoop(false);
-    } else if (currentTime == duration && forwd) {
-      audioElement.current.currentTime = 0;
-      skipForward();
-    }
   };
 
   useEffect(() => {
@@ -206,7 +176,7 @@ const Show = ({ play, setPlay, audioElement, q }) => {
     const newIndex = index === 0 ? songData?.length - 1 : index - 1;
     setIndex(newIndex);
     setSong(songData[newIndex]);
-    navigate(`/show/${songData[newIndex]?.name}`);
+    navigate(`/show/${songData[newIndex]?.id}`);
     location.reload();
   };
 
@@ -214,7 +184,7 @@ const Show = ({ play, setPlay, audioElement, q }) => {
     const newIndex = index === songData?.length - 1 ? 0 : index + 1;
     setIndex(newIndex);
     setSong(songData[newIndex]);
-    navigate(`/show/${songData[newIndex]?.name}`);
+    navigate(`/show/${songData[newIndex]?.id}`);
     location.reload();
   };
 
@@ -312,11 +282,6 @@ const Show = ({ play, setPlay, audioElement, q }) => {
               </p>
             </div>
             <div className="flex gap-2">
-              <audio
-                src={song?.downloadUrl[song?.downloadUrl?.length - 1].url}
-                ref={audioElement}
-                onTimeUpdate={onPlaying}
-              />
               <div
                 className="bg-slate-500/10 p-2 rounded-full text-slate-800 dark:text-slate-200 cursor-pointer"
                 onClick={skipBack}
@@ -358,10 +323,10 @@ const Show = ({ play, setPlay, audioElement, q }) => {
         <div className="mx-10 mb-10 min-h-[calc(100vh-10rem)] m-2 flex flex-wrap gap-4 items-center justify-around">
           {tracks?.map((data, idx) => (
             <Link
-              to={`/show/${data?.name}`}
+              to={`/show/${data?.id}`}
               onClick={() => {
                 setPlay(true);
-                history.push(`/show/${data?.name}`)
+                history.push(`/show/${data?.id}`);
               }}
               key={idx}
             >
