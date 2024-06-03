@@ -4,41 +4,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
 
-const Header = ({ setQ }) => {
+const Header = ({ setQ, query, setQuery }) => {
   const [mode, setMode] = useState();
   const [showMenu, setShowMenu] = useState(false);
-  const [query, setQuery] = useState();
   const inputRefs = useRef([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch sunset time for a specific location (e.g., latitude and longitude of San Francisco)
-        const response = await axios.get(
-          "https://api.sunrise-sunset.org/json?lat=37.7749&lng=-122.4194&formatted=0"
-        );
-        const sunsetTimeUTC = new Date(response.data.results.sunset);
-        const sunsetTimeLocal = new Date(
-          sunsetTimeUTC.toLocaleString("en-US", {
-            timeZone: "America/Los_Angeles",
-          })
-        );
-        const currentTime = new Date();
-
-        // Calculate time difference in milliseconds
-        const timeDifference = sunsetTimeLocal - currentTime;
-
-        // If sunset has occurred, switch to dark theme
-        if (timeDifference < 0) {
-          setMode("dark");
-        }
-      } catch (error) {
-        console.error("Error fetching sunset time:", error);
-      }
-    };
-
-    // Call fetchData function to fetch sunset time when component mounts
-    fetchData();
     changeTheme();
   }, []);
 
@@ -163,7 +134,7 @@ const Header = ({ setQ }) => {
             </p>
           </Link>
           <div className="flex items-center justify-center gap-4">
-            <button onClick={handleLinkClick} id>
+            <button onClick={handleLinkClick}>
               <Search className="cursor-pointer text-slate-800 dark:text-slate-300" />
             </button>
             <input

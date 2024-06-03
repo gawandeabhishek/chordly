@@ -29,10 +29,10 @@ const Home = ({ setPlay, q }) => {
     <div className="mx-10 mb-10 min-h-[calc(100vh-10rem)] m-2 flex flex-wrap gap-4 items-center justify-around">
       {tracks?.map((data, idx) => (
         <Link
-          to={`/show/${data?.name}`}
+          to={`/show/${data.id}`}
           onClick={() => {
             setPlay(true);
-            history.push(`/show/${data?.name}`);
+            history.push(`/show/${data?.data?.results}`);
             location.reload();
           }}
           key={idx}
