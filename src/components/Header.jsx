@@ -83,7 +83,7 @@ const Header = ({ setQ, query, setQuery }) => {
         <Link to={"/user"}>
           <img
             src="./programmerboyabhiSmallImg.jpg"
-            alt="alex"
+            alt="programmerboyabhi"
             className="rounded-full h-[2.50rem] w-[2.50rem] cursor-pointer"
           />
         </Link>
