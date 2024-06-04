@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useRef } from "react";
 
 const Header = ({ setQ, query, setQuery }) => {
-  const [mode, setMode] = useState();
+  const [mode, setMode] = useState("dark");
   const [showMenu, setShowMenu] = useState(false);
   const inputRefs = useRef([]);
 
@@ -82,7 +82,7 @@ const Header = ({ setQ, query, setQuery }) => {
       <div className="flex gap-4 w-full sm:w-max justify-between sm:justify-normal items-center">
         <Link to={"/user"}>
           <img
-            src="https://img.freepik.com/premium-photo/man-wearing-glasses-is-smiling-holding-tablet_905510-2118.jpg?w=740"
+            src="./programmerboyabhiSmallImg.jpg"
             alt="alex"
             className="rounded-full h-[2.50rem] w-[2.50rem] cursor-pointer"
           />
