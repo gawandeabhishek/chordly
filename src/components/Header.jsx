@@ -82,7 +82,7 @@ const Header = ({ setQ, query, setQuery }) => {
       <div className="flex gap-4 w-full sm:w-max justify-between sm:justify-normal items-center">
         <Link to={"/user"}>
           <img
-            src="./programmerboyabhiSmallImg.jpg"
+            src="https://img.freepik.com/free-photo/3d-rendering-cartoon-like-man-working-computer_23-2150797572.jpg?t=st=1717509702~exp=1717513302~hmac=be46003896dac6f6511d8e0debf08f0e98a92a5cae3c7bd86c374e522978b68a&w=740"
             alt="programmerboyabhi"
             className="rounded-full h-[2.50rem] w-[2.50rem] cursor-pointer"
           />
