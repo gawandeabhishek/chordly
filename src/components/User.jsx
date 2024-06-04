@@ -5,7 +5,7 @@ const User = () => {
   return (
     <div className="flex min-h-[calc(100vh-10rem)] items-center mt-10 flex-col sm:flex-row gap-4 sm:gap-20 justify-center w-full">
       <img
-        src="./programmerboyabhi.jpg"
+        src="https://img.freepik.com/free-photo/3d-rendering-cartoon-like-man-working-computer_23-2150797572.jpg?t=st=1717509702~exp=1717513302~hmac=be46003896dac6f6511d8e0debf08f0e98a92a5cae3c7bd86c374e522978b68a&w=740"
         alt="programmerboyabhi"
         className="rounded-full w-[80%] sm:w-[26%] cursor-pointer m-0 sm:m-10"
       />
