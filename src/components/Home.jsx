@@ -3,27 +3,11 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import he from "he";
 
-const Home = ({ setPlay, q }) => {
-  const [tracks, setTracks] = useState();
+const Home = ({ setPlay, q, setIsOnShow, tracks }) => {
 
   useEffect(() => {
-    fetchData();
-  }, [q]);
-
-  const fetchData = async () => {
-    const options = {
-      method: "GET",
-      url: `${import.meta.env.VITE_WEB_URL}/api/search/songs`,
-      params: { query: q === "" ? "bollywood" : q, limit: 100000 },
-    };
-
-    try {
-      const { data } = await axios.request(options);
-      setTracks(data?.data?.results);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    setIsOnShow(true);
+  }, []);
 
   return (
     <div className="mx-10 mb-10 min-h-[calc(100vh-10rem)] m-2 flex flex-wrap gap-4 items-center justify-around">
