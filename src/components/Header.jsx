@@ -1,10 +1,8 @@
-import axios from "axios";
 import { Home, Menu, Moon, Search, Sun, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { useRef } from "react";
 
-const Header = ({ setQ, query, setQuery }) => {
+const Header = ({ setQ, setQuery }) => {
   const [mode, setMode] = useState("dark");
   const [showMenu, setShowMenu] = useState(false);
   const inputRefs = useRef([]);
@@ -59,7 +57,6 @@ const Header = ({ setQ, query, setQuery }) => {
         <Link
           to={"/"}
           onClick={() => {
-            window.location.href = `/`;
             setQ("");
           }}
         >
@@ -123,7 +120,6 @@ const Header = ({ setQ, query, setQuery }) => {
             to={"/"}
             className="flex items-center justify-center gap-4"
             onClick={() => {
-              window.location.href = `/`;
               setQ("");
               setShowMenu(false);
             }}
