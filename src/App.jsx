@@ -31,8 +31,6 @@ const App = () => {
   const [tracks, setTracks] = useState();
   const [songId, setSongId] = useState();
 
-  
-
   const onPlaying = () => {
     const duration = audioElement.current.duration;
     const currentTime = audioElement.current.currentTime;
@@ -319,34 +317,12 @@ const App = () => {
           path="/show/:id"
           element={
             <Show
-              play={play}
               setPlay={setPlay}
               song={song}
-              setSong={setSong}
-              audioTrack={audioTrack}
-              setAudioTrack={setAudioTrack}
-              audioElement={audioElement}
-              isLoop={isLoop}
-              setIsLoop={setIsLoop}
-              forwd={forwd}
-              setForwd={setForwd}
-              onceLoop={onceLoop}
-              setOnceLoop={setOnceLoop}
-              songData={songData}
-              setSongData={setSongData}
               q={q}
-              setIsOnShow={setIsOnShow}
-              fetchData={fetchData}
-              fetchsongData={fetchsongData}
-              debouncedFetchSongData={debouncedFetchSongData}
-              fetchSuggestions={fetchSuggestions}
-              songId={songId}
               setSongId={setSongId}
-              index={index}
-              setIndex={setIndex}
-              navigate={navigate}
               tracks={tracks}
-              setTracks={setTracks}
+              setIsOnShow={setIsOnShow}
             />
           }
         />
