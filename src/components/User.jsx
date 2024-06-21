@@ -23,7 +23,7 @@ const User = ({ setIsOnShow, q, setPlay, tracks }) => {
               <span className="text-pink-800 dark:text-rose-800">There</span>!
             </h1>
             <p className="text-slate-600 dark:text-slate-400 text-sm w-[80%] cursor-text">
-              I'm <span className="font-semibold">Abhishek</span>, a first-year
+              I'm <span className="font-semibold">Abhishek Gawande</span>, a first-year
               college student well-versed in the MERN stack. Welcome to my
               project website! : &#41; <br />
               If you enjoy what you see, feel free to share it with your
