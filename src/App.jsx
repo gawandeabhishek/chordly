@@ -57,6 +57,10 @@ const App = () => {
     } else if (currentTime >= 3) {
       setChangeSong(false);
     }
+    
+    if (isDragging.current) {
+      setAudioTrack({ ...audioTrack, progress: (newCurrentTimeRef.current / audioTrack?.length)  * 100 });
+    } 
   };
 
   const togglePlay = () => {
@@ -75,6 +79,7 @@ const App = () => {
     }
 
     audioElement.current.currentTime = 0;
+    setAudioTrack({ ...audioTrack, progress: 0 });
     if (changeSong) {
       const newIndex = index === 0 ? songData?.length - 1 : index - 1;
       setIndex(newIndex);
@@ -83,15 +88,17 @@ const App = () => {
       if (!isOnShow) navigate(`/show/${songId}`);
     }
   };
-
+  
   const skipForward = () => {
     const newIndex = index === songData?.length - 1 ? 0 : index + 1;
     setIndex(newIndex);
     setSong(songData[newIndex]);
     setSongId(songData[newIndex]?.songId);
     if (!isOnShow) navigate(`/show/${songId}`);
+    audioElement.current.currentTime = 0;
+    setAudioTrack({ ...audioTrack, progress: 0 });
   };
-
+  
   let setConditions = () => {
     if (forwd) {
       setOnceLoop(true);

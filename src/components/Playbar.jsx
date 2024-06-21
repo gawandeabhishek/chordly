@@ -36,7 +36,7 @@ const Playbar = ({
           <div className="relative w-full flex items-center justify-center gap-2 py-2 px-6 sm:px-20 cursor-pointer z-50">
             <p className="text-xs font-semibold text-slate-700 dark:text-white">
               {(audioTrack?.progress / 60).toFixed(2) === "NaN"
-                ? ""
+                ? "0.00"
                 : (audioElement?.current?.currentTime / 60).toFixed(2)}
             </p>
             <div
@@ -49,7 +49,7 @@ const Playbar = ({
               <div className="w-full h-1 bg-gray-200 group dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer">
                 <div
                   className="w-full h-1 bg-slate-700 dark:bg-white group-hover:bg-slate-400 rounded-full absolute z-10 flex items-center justify-end"
-                  style={{ width: `${newCurrentTimeRef.current * 100 / audioTrack?.length}%` }}
+                  style={{ width: `${audioTrack?.progress}%` }}
                 >
                   <div className="h-3 w-3 bg-transparent fixed group-hover:bg-slate-700 dark:group-hover:bg-white rounded-full z-20 cursor-pointer -mr-1.5" />
                 </div>
@@ -57,7 +57,7 @@ const Playbar = ({
             </div>
             <p className="text-xs font-semibold text-slate-700 dark:text-white">
               {(audioTrack?.length / 60).toFixed(2) === "NaN"
-                ? ""
+                ? "0.00"
                 : (audioTrack?.length / 60).toFixed(2)}
             </p>
           </div>
