@@ -36,9 +36,10 @@ const Playbar = ({
                 ? ""
                 : (audioElement?.current?.currentTime / 60).toFixed(2)}
             </p>
+            <div ref={dragRef} onClick={updatePlaybar} className="h-5 group relative w-full flex items-center justify-center">
+
             <div
               className="w-full h-1 bg-gray-200 group dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer"
-              ref={dragRef}
               onClick={updatePlaybar}
             >
               <div
@@ -47,6 +48,7 @@ const Playbar = ({
               >
                 <div className="h-3 w-3 bg-transparent fixed group-hover:bg-slate-700 dark:group-hover:bg-white rounded-full z-20 cursor-pointer -mr-1.5" />
               </div>
+            </div>
             </div>
             <p className="text-xs font-semibold text-slate-700 dark:text-white">
               {(audioTrack?.length / 60).toFixed(2) === "NaN"
