@@ -1,3 +1,4 @@
+import he from "he";
 import {
   Pause,
   Play,
@@ -8,7 +9,6 @@ import {
   SkipForward,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import he from "he";
 
 const Playbar = ({
   audioTrack,
@@ -25,6 +25,9 @@ const Playbar = ({
   song,
   isOnShow,
   isSongExist,
+  handleMouseDown,
+  handleTouchStart,
+  newCurrentTimeRef
 }) => {
   return (
     <>
@@ -36,19 +39,21 @@ const Playbar = ({
                 ? ""
                 : (audioElement?.current?.currentTime / 60).toFixed(2)}
             </p>
-            <div ref={dragRef} onClick={updatePlaybar} className="h-5 group relative w-full flex items-center justify-center">
-
             <div
-              className="w-full h-1 bg-gray-200 group dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer"
+              ref={dragRef}
               onClick={updatePlaybar}
+              onMouseDown={handleMouseDown}
+              onTouchStart={handleTouchStart}
+              className="h-5 group relative w-full flex items-center justify-center"
             >
-              <div
-                className="w-full h-1 bg-slate-700 dark:bg-white group-hover:bg-slate-400 rounded-full absolute z-10 flex items-center justify-end"
-                style={{ left: `calc(${audioTrack?.progress}% - 100%)` }}
-              >
-                <div className="h-3 w-3 bg-transparent fixed group-hover:bg-slate-700 dark:group-hover:bg-white rounded-full z-20 cursor-pointer -mr-1.5" />
+              <div className="w-full h-1 bg-gray-200 group dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer">
+                <div
+                  className="w-full h-1 bg-slate-700 dark:bg-white group-hover:bg-slate-400 rounded-full absolute z-10 flex items-center justify-end"
+                  style={{ width: `${newCurrentTimeRef.current * 100 / audioTrack?.length}%` }}
+                >
+                  <div className="h-3 w-3 bg-transparent fixed group-hover:bg-slate-700 dark:group-hover:bg-white rounded-full z-20 cursor-pointer -mr-1.5" />
+                </div>
               </div>
-            </div>
             </div>
             <p className="text-xs font-semibold text-slate-700 dark:text-white">
               {(audioTrack?.length / 60).toFixed(2) === "NaN"
