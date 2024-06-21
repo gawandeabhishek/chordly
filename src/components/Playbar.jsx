@@ -27,7 +27,7 @@ const Playbar = ({
   isSongExist,
   handleMouseDown,
   handleTouchStart,
-  newCurrentTimeRef
+  setIsOnShow
 }) => {
   return (
     <>
@@ -65,17 +65,18 @@ const Playbar = ({
             <div className="flex sm:grid grid-cols-3 w-full px-6 sm:px-20 lg:px-32">
               <Link
                 className="flex items-center justify-between space-x-0 sm:space-x-2 w-full sm:w-fit col-start-1 justify-self-start"
+                onClick={() => setIsOnShow(false)}
                 to={`/show/${song?.id}`}
               >
                 <img
                   className="h-10 w-10 rounded-md cursor-pointer"
                   src={song?.image[song?.image?.length - 1]?.url}
                 ></img>
-                <div className="hidden lg:flex flex-col items-start w-fit">
-                  <h4 className="font-bold text-sm text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
+                <div className="hidden sm:flex flex-col items-start w-fit">
+                  <h4 className="font-bold text-xs lg:text-sm text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
                     {song ? he.decode(song?.name) : null}
                   </h4>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm w-[50%] mx-2 cursor-pointer truncate">
+                  <p className="hidden lg:block text-slate-600 dark:text-slate-400 w-[60%] text-sm mx-2 cursor-pointer truncate">
                     {song?.artists?.primary?.map((singers, idx) => (
                       <span key={idx}>
                         {singers?.name}
