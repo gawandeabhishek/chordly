@@ -27,13 +27,13 @@ const Playbar = ({
   isSongExist,
   handleMouseDown,
   handleTouchStart,
-  newCurrentTimeRef
+  setIsOnShow
 }) => {
   return (
     <>
       {isSongExist ? (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/50 dark:bg-white/10 backdrop-blur-sm flex flex-col items-center justify-center gap-2 py-4">
-          <div className="relative w-full flex items-center justify-center gap-2 py-2 px-6 sm:px-20 cursor-pointer z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-white/50 dark:bg-white/10 backdrop-blur-sm flex flex-col items-center justify-center gap-2 pb-4">
+          <div className="relative w-full flex items-center justify-center gap-2 pt-2 px-6 sm:px-20 cursor-pointer z-50">
             <p className="text-xs font-semibold text-slate-700 dark:text-white">
               {(audioTrack?.progress / 60).toFixed(2) === "NaN"
                 ? "0.00"
@@ -65,17 +65,18 @@ const Playbar = ({
             <div className="flex sm:grid grid-cols-3 w-full px-6 sm:px-20 lg:px-32">
               <Link
                 className="flex items-center justify-between space-x-0 sm:space-x-2 w-full sm:w-fit col-start-1 justify-self-start"
+                onClick={() => setIsOnShow(false)}
                 to={`/show/${song?.id}`}
               >
                 <img
                   className="h-10 w-10 rounded-md cursor-pointer"
                   src={song?.image[song?.image?.length - 1]?.url}
                 ></img>
-                <div className="hidden lg:flex flex-col items-start w-fit">
-                  <h4 className="font-bold text-sm text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
+                <div className="hidden sm:flex flex-col items-start w-fit">
+                  <h4 className="font-bold text-xs lg:text-sm text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
                     {song ? he.decode(song?.name) : null}
                   </h4>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm w-[50%] mx-2 cursor-pointer truncate">
+                  <p className="hidden lg:block text-slate-600 dark:text-slate-400 w-[60%] text-sm mx-2 cursor-pointer truncate">
                     {song?.artists?.primary?.map((singers, idx) => (
                       <span key={idx}>
                         {singers?.name}
