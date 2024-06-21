@@ -31,6 +31,8 @@ const App = () => {
   const [tracks, setTracks] = useState();
   const [songId, setSongId] = useState();
 
+  const [changeSong, setChangeSong] = useState(false);
+
   const onPlaying = () => {
     const duration = audioElement.current.duration;
     const currentTime = audioElement.current.currentTime;
@@ -49,6 +51,8 @@ const App = () => {
     } else if (currentTime == duration && forwd) {
       skipForward();
       audioElement.current.currentTime = 0;
+    } else if (currentTime >= 3) {
+      setChangeSong(false);
     }
   };
 
@@ -56,12 +60,26 @@ const App = () => {
     setPlay(!play);
   };
 
-  const skipBack = async () => {
-    const newIndex = index === 0 ? songData?.length - 1 : index - 1;
+  const skipBack = (e) => {
+    const currentTime = audioElement.current.currentTime;
+      switch (e.detail) {
+        case 1:
+          if (currentTime >= 3)
+            setChangeSong(true);
+          break;
+        case 2:
+          setChangeSong(true);
+          break;
+      }
+
+    audioElement.current.currentTime = 0;
+    if (changeSong) {
+      const newIndex = index === 0 ? songData?.length - 1 : index - 1;
     setIndex(newIndex);
     setSong(songData[newIndex]);
     setSongId(songData[newIndex]?.songId);
     if (!isOnShow) navigate(`/show/${songId}`);
+    }
   };
 
   const skipForward = () => {
