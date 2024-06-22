@@ -3,12 +3,12 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Home from "./components/Home";
-import Playbar from "./components/Playbar";
-import Show from "./components/Show";
 import User from "./components/User";
+import Show from "./components/Show";
+import Playbar from "./components/Playbar";
 
-import axios from "axios";
 import debounce from "lodash/debounce";
+import axios from "axios";
 
 const App = () => {
   const [play, setPlay] = useState(true);
@@ -33,9 +33,6 @@ const App = () => {
 
   const [changeSong, setChangeSong] = useState(false);
 
-  const isDragging = useRef(false);
-  const newCurrentTimeRef = useRef(0);
-
   const onPlaying = () => {
     const duration = audioElement.current.duration;
     const currentTime = audioElement.current.currentTime;
@@ -57,13 +54,6 @@ const App = () => {
     } else if (currentTime >= 3) {
       setChangeSong(false);
     }
-
-    if (isDragging.current) {
-      setAudioTrack({
-        ...audioTrack,
-        progress: (newCurrentTimeRef.current / audioTrack?.length) * 100,
-      });
-    }
   };
 
   const togglePlay = () => {
@@ -72,38 +62,32 @@ const App = () => {
 
   const skipBack = (e) => {
     const currentTime = audioElement.current.currentTime;
-    switch (e.detail) {
-      case 1:
-        if (currentTime >= 3) setChangeSong(true);
-        break;
-      case 2:
-        setChangeSong(true);
-        break;
-    }
+      switch (e.detail) {
+        case 1:
+          if (currentTime >= 3)
+            setChangeSong(true);
+          break;
+        case 2:
+          setChangeSong(true);
+          break;
+      }
 
     audioElement.current.currentTime = 0;
-    setAudioTrack({ ...audioTrack, progress: 0 });
-    if (changeSong && index !== songData?.length - 1) {
+    if (changeSong) {
       const newIndex = index === 0 ? songData?.length - 1 : index - 1;
-      setIndex(newIndex);
-      setSong(songData[newIndex]);
-      setSongId(songData[newIndex]?.id);
-      if (!isOnShow) navigate(`/show/${songData[newIndex]?.id}`);
+    setIndex(newIndex);
+    setSong(songData[newIndex]);
+    setSongId(songData[newIndex]?.songId);
+    if (!isOnShow) navigate(`/show/${songId}`);
     }
   };
 
   const skipForward = () => {
-    if (songData?.length - 1 == index) {
-      return null;
-    } else if (index !== songData?.length - 1) {
-      const newIndex = index === songData?.length - 1 ? 0 : index + 1;
-      setIndex(newIndex);
-      setSong(songData[newIndex]);
-      setSongId(songData[newIndex]?.id);
-      if (!isOnShow) navigate(`/show/${songData[newIndex]?.id}`);
-      audioElement.current.currentTime = 0;
-      setAudioTrack({ ...audioTrack, progress: 0 });
-    }
+    const newIndex = index === songData?.length - 1 ? 0 : index + 1;
+    setIndex(newIndex);
+    setSong(songData[newIndex]);
+    setSongId(songData[newIndex]?.songId);
+    if (!isOnShow) navigate(`/show/${songId}`);
   };
 
   let setConditions = () => {
@@ -139,9 +123,6 @@ const App = () => {
   };
 
   const fetchsongData = async () => {
-    if (songId === undefined) {
-      return null;
-    }
     const options = {
       method: "GET",
       url: `https://saavn.dev/api/songs/${songId}`,
@@ -149,6 +130,7 @@ const App = () => {
 
     try {
       const { data } = await axios.request(options);
+      setSongData(data.data[0]);
       setSong(data.data[0]);
     } catch (error) {
       console.error(error);
@@ -158,6 +140,10 @@ const App = () => {
   const debouncedFetchSongData = useRef(debounce(fetchsongData, 500)).current;
 
   const fetchSuggestions = async (songId) => {
+    if (!songId) {
+      console.error("No song ID found.");
+      return null;
+    }
     const options = {
       method: "GET",
       url: `https://saavn.dev/api/songs/${songId}/suggestions`,
@@ -165,9 +151,6 @@ const App = () => {
     try {
       const { data } = await axios.request(options);
       if (data && data?.data) {
-        setIndex(0);
-        setSong(songData[0]);
-        setSongId(songData[0]?.id);
         setSongData(data?.data);
         return data?.data;
       } else {
@@ -187,7 +170,7 @@ const App = () => {
       // Calculate the width of the playbar
       const barWidth = barRect.width;
       // Calculate the offset of the click event within the playbar
-      const clickOffsetX = (e.clientX || e.touches[0].clientX) - barRect.left;
+      const clickOffsetX = e.clientX - barRect.left;
       // Calculate the new position of the playbar based on the click position
       const newProgress = (clickOffsetX / barWidth) * 100;
       // Update the progress of the audio track
@@ -195,54 +178,9 @@ const App = () => {
 
       // Update the current time of the audio element
       const newCurrentTime = (clickOffsetX / barWidth) * audioTrack?.length;
-      newCurrentTimeRef.current = newCurrentTime; // Store the new current time
+      audioElement.current.currentTime = newCurrentTime;
     } catch (error) {
       console.error("An error occurred while updating playbar:", error);
-    }
-  };
-
-  const handleMouseDown = (e) => {
-    isDragging.current = true;
-    updatePlaybar(e);
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
-
-  const handleMouseMove = (e) => {
-    if (isDragging.current) {
-      updatePlaybar(e);
-    }
-  };
-
-  const handleMouseUp = () => {
-    isDragging.current = false;
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
-    if (audioElement.current) {
-      audioElement.current.currentTime = newCurrentTimeRef.current;
-    }
-  };
-
-  const handleTouchStart = (e) => {
-    isDragging.current = true;
-    updatePlaybar(e);
-    document.addEventListener("touchmove", handleTouchMove);
-    document.addEventListener("touchend", handleTouchEnd);
-  };
-
-  const handleTouchMove = (e) => {
-    if (isDragging.current) {
-      updatePlaybar(e);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    isDragging.current = false;
-    document.removeEventListener("touchmove", handleTouchMove);
-    document.removeEventListener("touchend", handleTouchEnd);
-    // Update the audio element's current time
-    if (audioElement.current) {
-      audioElement.current.currentTime = newCurrentTimeRef.current;
     }
   };
 
@@ -251,12 +189,11 @@ const App = () => {
   }, [q]);
 
   useEffect(() => {
-    if (songId != null) fetchsongData();
+    fetchsongData();
   }, [songId]);
 
   useEffect(() => {
     if (play) {
-      audioElement.current.autoPlay = true;
       audioElement.current.play();
     } else {
       audioElement.current.pause();
@@ -337,10 +274,10 @@ const App = () => {
   }, [songId]);
 
   useEffect(() => {
-    if (songId !== null) {
-      fetchSuggestions(songId);
+    if (song && song?.id) {
+      fetchSuggestions(song?.id);
     }
-  }, [index === songData?.length - 1]);
+  }, [song]);
 
   useEffect(() => {
     fetchSongsData();
@@ -423,10 +360,6 @@ const App = () => {
         song={song}
         isOnShow={isOnShow}
         isSongExist={isSongExist}
-        handleMouseDown={handleMouseDown}
-        handleTouchStart={handleTouchStart}
-        newCurrentTimeRef={newCurrentTimeRef}
-        setIsOnShow={setIsOnShow}
       />
 
       <Footer />

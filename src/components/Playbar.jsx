@@ -1,4 +1,3 @@
-import he from "he";
 import {
   Pause,
   Play,
@@ -9,6 +8,7 @@ import {
   SkipForward,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import he from "he";
 
 const Playbar = ({
   audioTrack,
@@ -25,39 +25,34 @@ const Playbar = ({
   song,
   isOnShow,
   isSongExist,
-  handleMouseDown,
-  handleTouchStart,
-  setIsOnShow
 }) => {
   return (
     <>
       {isSongExist ? (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/50 dark:bg-white/10 backdrop-blur-sm flex flex-col items-center justify-center gap-2 pb-4">
-          <div className="relative w-full flex items-center justify-center gap-2 pt-2 px-6 sm:px-20 cursor-pointer z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-white/50 dark:bg-white/10 backdrop-blur-sm flex flex-col items-center justify-center gap-2 py-4">
+          <div className="relative w-full flex items-center justify-center gap-2 py-2 px-6 sm:px-20 cursor-pointer z-50">
             <p className="text-xs font-semibold text-slate-700 dark:text-white">
               {(audioTrack?.progress / 60).toFixed(2) === "NaN"
-                ? "0.00"
+                ? ""
                 : (audioElement?.current?.currentTime / 60).toFixed(2)}
             </p>
+            <div ref={dragRef} onClick={updatePlaybar} className="h-5 group relative w-full flex items-center justify-center">
+
             <div
-              ref={dragRef}
+              className="w-full h-1 bg-gray-200 group dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer"
               onClick={updatePlaybar}
-              onMouseDown={handleMouseDown}
-              onTouchStart={handleTouchStart}
-              className="h-5 group relative w-full flex items-center justify-center"
             >
-              <div className="w-full h-1 bg-gray-200 group dark:bg-gray-700 relative rounded-full overflow-hidden group cursor-pointer">
-                <div
-                  className="w-full h-1 bg-slate-700 dark:bg-white group-hover:bg-slate-400 rounded-full absolute z-10 flex items-center justify-end"
-                  style={{ width: `${audioTrack?.progress}%` }}
-                >
-                  <div className="h-3 w-3 bg-transparent fixed group-hover:bg-slate-700 dark:group-hover:bg-white rounded-full z-20 cursor-pointer -mr-1.5" />
-                </div>
+              <div
+                className="w-full h-1 bg-slate-700 dark:bg-white group-hover:bg-slate-400 rounded-full absolute z-10 flex items-center justify-end"
+                style={{ left: `calc(${audioTrack?.progress}% - 100%)` }}
+              >
+                <div className="h-3 w-3 bg-transparent fixed group-hover:bg-slate-700 dark:group-hover:bg-white rounded-full z-20 cursor-pointer -mr-1.5" />
               </div>
+            </div>
             </div>
             <p className="text-xs font-semibold text-slate-700 dark:text-white">
               {(audioTrack?.length / 60).toFixed(2) === "NaN"
-                ? "0.00"
+                ? ""
                 : (audioTrack?.length / 60).toFixed(2)}
             </p>
           </div>
@@ -65,18 +60,17 @@ const Playbar = ({
             <div className="flex sm:grid grid-cols-3 w-full px-6 sm:px-20 lg:px-32">
               <Link
                 className="flex items-center justify-between space-x-0 sm:space-x-2 w-full sm:w-fit col-start-1 justify-self-start"
-                onClick={() => setIsOnShow(false)}
                 to={`/show/${song?.id}`}
               >
                 <img
                   className="h-10 w-10 rounded-md cursor-pointer"
                   src={song?.image[song?.image?.length - 1]?.url}
                 ></img>
-                <div className="hidden sm:flex flex-col items-start w-fit">
-                  <h4 className="font-bold text-xs lg:text-sm text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
+                <div className="hidden lg:flex flex-col items-start w-fit">
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-slate-50 w-fit mx-2 cursor-pointer">
                     {song ? he.decode(song?.name) : null}
                   </h4>
-                  <p className="hidden lg:block text-slate-600 dark:text-slate-400 w-[60%] text-sm mx-2 cursor-pointer truncate">
+                  <p className="text-slate-600 dark:text-slate-400 text-sm w-[50%] mx-2 cursor-pointer truncate">
                     {song?.artists?.primary?.map((singers, idx) => (
                       <span key={idx}>
                         {singers?.name}
