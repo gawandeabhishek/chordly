@@ -57,13 +57,10 @@ const App = () => {
     } else if (currentTime >= 3) {
       setChangeSong(false);
     }
-
+    
     if (isDragging.current) {
-      setAudioTrack({
-        ...audioTrack,
-        progress: (newCurrentTimeRef.current / audioTrack?.length) * 100,
-      });
-    }
+      setAudioTrack({ ...audioTrack, progress: (newCurrentTimeRef.current / audioTrack?.length)  * 100 });
+    } 
   };
 
   const togglePlay = () => {
@@ -83,29 +80,25 @@ const App = () => {
 
     audioElement.current.currentTime = 0;
     setAudioTrack({ ...audioTrack, progress: 0 });
-    if (changeSong && index !== songData?.length - 1) {
+    if (changeSong) {
       const newIndex = index === 0 ? songData?.length - 1 : index - 1;
       setIndex(newIndex);
       setSong(songData[newIndex]);
-      setSongId(songData[newIndex]?.id);
-      if (!isOnShow) navigate(`/show/${songData[newIndex]?.id}`);
+      setSongId(songData[newIndex]?.songId);
+      if (!isOnShow) navigate(`/show/${songId}`);
     }
   };
-
+  
   const skipForward = () => {
-    if (songData?.length - 1 == index) {
-      return null;
-    } else if (index !== songData?.length - 1) {
-      const newIndex = index === songData?.length - 1 ? 0 : index + 1;
-      setIndex(newIndex);
-      setSong(songData[newIndex]);
-      setSongId(songData[newIndex]?.id);
-      if (!isOnShow) navigate(`/show/${songData[newIndex]?.id}`);
-      audioElement.current.currentTime = 0;
-      setAudioTrack({ ...audioTrack, progress: 0 });
-    }
+    const newIndex = index === songData?.length - 1 ? 0 : index + 1;
+    setIndex(newIndex);
+    setSong(songData[newIndex]);
+    setSongId(songData[newIndex]?.songId);
+    if (!isOnShow) navigate(`/show/${songId}`);
+    audioElement.current.currentTime = 0;
+    setAudioTrack({ ...audioTrack, progress: 0 });
   };
-
+  
   let setConditions = () => {
     if (forwd) {
       setOnceLoop(true);
@@ -139,9 +132,6 @@ const App = () => {
   };
 
   const fetchsongData = async () => {
-    if (songId === undefined) {
-      return null;
-    }
     const options = {
       method: "GET",
       url: `https://saavn.dev/api/songs/${songId}`,
@@ -149,6 +139,7 @@ const App = () => {
 
     try {
       const { data } = await axios.request(options);
+      setSongData(data.data[0]);
       setSong(data.data[0]);
     } catch (error) {
       console.error(error);
@@ -158,6 +149,10 @@ const App = () => {
   const debouncedFetchSongData = useRef(debounce(fetchsongData, 500)).current;
 
   const fetchSuggestions = async (songId) => {
+    if (!songId) {
+      console.error("No song ID found.");
+      return null;
+    }
     const options = {
       method: "GET",
       url: `https://saavn.dev/api/songs/${songId}/suggestions`,
@@ -165,9 +160,6 @@ const App = () => {
     try {
       const { data } = await axios.request(options);
       if (data && data?.data) {
-        setIndex(0);
-        setSong(songData[0]);
-        setSongId(songData[0]?.id);
         setSongData(data?.data);
         return data?.data;
       } else {
@@ -251,12 +243,11 @@ const App = () => {
   }, [q]);
 
   useEffect(() => {
-    if (songId != null) fetchsongData();
+    fetchsongData();
   }, [songId]);
 
   useEffect(() => {
     if (play) {
-      audioElement.current.autoPlay = true;
       audioElement.current.play();
     } else {
       audioElement.current.pause();
@@ -337,10 +328,10 @@ const App = () => {
   }, [songId]);
 
   useEffect(() => {
-    if (songId !== null) {
-      fetchSuggestions(songId);
+    if (song && song?.id) {
+      fetchSuggestions(song?.id);
     }
-  }, [index === songData?.length - 1]);
+  }, [song]);
 
   useEffect(() => {
     fetchSongsData();
@@ -426,7 +417,6 @@ const App = () => {
         handleMouseDown={handleMouseDown}
         handleTouchStart={handleTouchStart}
         newCurrentTimeRef={newCurrentTimeRef}
-        setIsOnShow={setIsOnShow}
       />
 
       <Footer />
