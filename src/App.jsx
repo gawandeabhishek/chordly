@@ -169,6 +169,51 @@ const App = () => {
     }
   };
 
+  const handleMouseDown = (e) => {
+    isDragging.current = true;
+    updatePlaybar(e);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging.current) {
+      updatePlaybar(e);
+    }
+  };
+
+  const handleMouseUp = () => {
+    isDragging.current = false;
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+    if (audioElement.current) {
+      audioElement.current.currentTime = newCurrentTimeRef.current;
+    }
+  };
+
+  const handleTouchStart = (e) => {
+    isDragging.current = true;
+    updatePlaybar(e);
+    document.addEventListener("touchmove", handleTouchMove);
+    document.addEventListener("touchend", handleTouchEnd);
+  };
+
+  const handleTouchMove = (e) => {
+    if (isDragging.current) {
+      updatePlaybar(e);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    isDragging.current = false;
+    document.removeEventListener("touchmove", handleTouchMove);
+    document.removeEventListener("touchend", handleTouchEnd);
+    // Update the audio element's current time
+    if (audioElement.current) {
+      audioElement.current.currentTime = newCurrentTimeRef.current;
+    }
+  };
+
   const updatePlaybar = (e) => {
     try {
       // Get the bounding rectangle of the playbar
