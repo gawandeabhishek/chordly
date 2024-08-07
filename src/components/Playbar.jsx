@@ -25,6 +25,9 @@ const Playbar = ({
   song,
   isOnShow,
   isSongExist,
+  handleMouseDown,
+  handleTouchStart,
+  newCurrentTimeRef
 }) => {
   return (
     <>
