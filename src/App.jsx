@@ -58,10 +58,13 @@ const App = () => {
       setChangeSong(false);
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
     if (isDragging.current) {
       setAudioTrack({ ...audioTrack, progress: (newCurrentTimeRef.current / audioTrack?.length)  * 100 });
     } 
 =======
+=======
+>>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)
 
     if (isDragging.current) {
       setAudioTrack({
@@ -69,6 +72,9 @@ const App = () => {
         progress: (newCurrentTimeRef.current / audioTrack?.length) * 100,
       });
     }
+<<<<<<< HEAD
+>>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)
+=======
 >>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)
   };
 
@@ -90,6 +96,7 @@ const App = () => {
     audioElement.current.currentTime = 0;
     setAudioTrack({ ...audioTrack, progress: 0 });
 <<<<<<< HEAD
+<<<<<<< HEAD
     if (changeSong) {
       const newIndex = index === 0 ? songData?.length - 1 : index - 1;
       setIndex(newIndex);
@@ -104,10 +111,19 @@ const App = () => {
       setSongId(songData[newIndex]?.id);
       if (!isOnShow) navigate(`/show/${songData[newIndex]?.id}`);
 >>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)
+=======
+    if (changeSong && index !== songData?.length - 1) {
+      const newIndex = index === 0 ? songData?.length - 1 : index - 1;
+      setIndex(newIndex);
+      setSong(songData[newIndex]);
+      setSongId(songData[newIndex]?.id);
+      if (!isOnShow) navigate(`/show/${songData[newIndex]?.id}`);
+>>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)
     }
   };
   
   const skipForward = () => {
+<<<<<<< HEAD
 <<<<<<< HEAD
     const newIndex = index === songData?.length - 1 ? 0 : index + 1;
     setIndex(newIndex);
@@ -117,6 +133,8 @@ const App = () => {
     audioElement.current.currentTime = 0;
     setAudioTrack({ ...audioTrack, progress: 0 });
 =======
+=======
+>>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)
     if (songData?.length - 1 == index) {
       return null;
     } else if (index !== songData?.length - 1) {
@@ -128,6 +146,9 @@ const App = () => {
       audioElement.current.currentTime = 0;
       setAudioTrack({ ...audioTrack, progress: 0 });
     }
+<<<<<<< HEAD
+>>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)
+=======
 >>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)
   };
   
@@ -497,6 +518,10 @@ const App = () => {
         handleTouchStart={handleTouchStart}
         newCurrentTimeRef={newCurrentTimeRef}
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+        setIsOnShow={setIsOnShow}
+>>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)
 =======
         setIsOnShow={setIsOnShow}
 >>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)

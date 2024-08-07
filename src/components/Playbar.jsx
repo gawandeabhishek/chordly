@@ -28,7 +28,11 @@ const Playbar = ({
   handleMouseDown,
   handleTouchStart,
 <<<<<<< HEAD
+<<<<<<< HEAD
   newCurrentTimeRef
+=======
+  setIsOnShow
+>>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)
 =======
   setIsOnShow
 >>>>>>> parent of 45a8e6c (Reverting previous commit due to the bug. The issue will be fixed in a later update.)
