@@ -1,11 +1,18 @@
 {
   "name": "Chordly",
   "short_name": "Chordly",
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "icons": [
+    {
+        "src": "maskable_icon.png",
+        "sizes": "196x196",
+        "type": "image/png",
+        "purpose": "any maskable_icon"
+    },
     {
       "src": "icon.svg",
       "sizes": "any",
