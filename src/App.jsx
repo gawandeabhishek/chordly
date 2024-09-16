@@ -144,7 +144,7 @@ const App = () => {
     }
     const options = {
       method: "GET",
-      url: `https://saavn.dev/api/songs/${songId}`,
+      url: `${import.meta.env.VITE_WEB_URL}/api/songs/${songId}`,
     };
 
     try {
@@ -160,7 +160,7 @@ const App = () => {
   const fetchSuggestions = async (songId) => {
     const options = {
       method: "GET",
-      url: `https://saavn.dev/api/songs/${songId}/suggestions`,
+      url: `${import.meta.env.VITE_WEB_URL}/api/songs/${songId}/suggestions`,
     };
     try {
       const { data } = await axios.request(options);
