@@ -9,8 +9,6 @@ import User from "./components/User";
 
 import axios from "axios";
 import debounce from "lodash/debounce";
-import SignUp from "./components/SignUp";
-import Login from "./components/Login";
 
 const App = () => {
   const [play, setPlay] = useState(true);
@@ -313,8 +311,6 @@ const App = () => {
     }
   }, []); // Run this effect only once, on component mount
 
-  console.log(song?.downloadUrl[song?.downloadUrl?.length - 1].url)
-
   useEffect(() => {
     // Convert the song object to a string using JSON.stringify
     const songString = JSON.stringify(song);
@@ -411,8 +407,6 @@ const App = () => {
             />
           }
         />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
       </Routes>
       <Playbar
         audioTrack={audioTrack}
