@@ -9,6 +9,8 @@ import User from "./components/User";
 
 import axios from "axios";
 import debounce from "lodash/debounce";
+import SignUp from "./components/SignUp";
+import Login from "./components/Login";
 
 const App = () => {
   const [play, setPlay] = useState(true);
@@ -409,6 +411,8 @@ const App = () => {
             />
           }
         />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
       <Playbar
         audioTrack={audioTrack}
