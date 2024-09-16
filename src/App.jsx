@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate, useParams } from "react-router-dom";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Home from "./components/Home";
@@ -10,7 +10,10 @@ import User from "./components/User";
 import axios from "axios";
 import debounce from "lodash/debounce";
 
+let songs = [];
+
 const App = () => {
+  const { id } = useParams();
   const [play, setPlay] = useState(true);
   const [song, setSong] = useState();
   const [audioTrack, setAudioTrack] = useState();
@@ -29,7 +32,7 @@ const App = () => {
   const [index, setIndex] = useState(0);
   const navigate = useNavigate();
   const [tracks, setTracks] = useState();
-  const [songId, setSongId] = useState();
+  const [songId, setSongId] = useState(id);
 
   const [changeSong, setChangeSong] = useState(false);
 
@@ -80,32 +83,52 @@ const App = () => {
         setChangeSong(true);
         break;
     }
+    if (index == 0) {
+      skipForward();
+    } else {
+      setSong(songs[index]);
+      setIndex(index - 1);
+    }
 
     audioElement.current.currentTime = 0;
     setAudioTrack({ ...audioTrack, progress: 0 });
-    if (changeSong && index !== songData?.length - 1) {
-      const newIndex = index === 0 ? songData?.length - 1 : index - 1;
-      setIndex(newIndex);
-      setSong(songData[newIndex]);
-      setSongId(songData[newIndex]?.id);
-      if (!isOnShow) navigate(`/show/${songData[newIndex]?.id}`);
+    if (changeSong) {
+      setSong(songs[index]);
+      setSongId(songs[index + 1]?.id);
+      if (!isOnShow) navigate(`/show/${songs[index + 1]?.id}`);
+    } else {
+      console.error("No previous song data found.");
     }
   };
-  
-  const skipForward = () => {
-    if (songData?.length - 1 == index) {
-      return null;
-    } else if (index !== songData?.length - 1) {
-      const newIndex = index === songData?.length - 1 ? 0 : index + 1;
-      setIndex(newIndex);
-      setSong(songData[newIndex]);
-      setSongId(songData[newIndex]?.id);
-      if (!isOnShow) navigate(`/show/${songData[newIndex]?.id}`);
+
+  console.log(songs)
+  const skipForward = async () => {
+    if (index != 0) {
+      songs.push(song);
+      setIndex(songs.length - 1);
+    } else {
+      songs.unshift(song);
+      setIndex(0);
+    }
+
+    let data;
+    if (songId) {
+      data = await fetchSuggestions();
+    }
+
+    if (data) {
+      songs.push(data);
+      setIndex(index + 1);
+      setSong(data);
+      setSongId(data.id);
+      if (!isOnShow) navigate(`/show/${data.id}`);
       audioElement.current.currentTime = 0;
       setAudioTrack({ ...audioTrack, progress: 0 });
+    } else {
+      console.error("No data or invalid suggestions data received");
     }
   };
-  
+
   let setConditions = () => {
     if (forwd) {
       setOnceLoop(true);
@@ -157,19 +180,20 @@ const App = () => {
 
   const debouncedFetchSongData = useRef(debounce(fetchsongData, 500)).current;
 
-  const fetchSuggestions = async (songId) => {
+  const fetchSuggestions = async () => {
     const options = {
       method: "GET",
       url: `${import.meta.env.VITE_WEB_URL}/api/songs/${songId}/suggestions`,
     };
     try {
       const { data } = await axios.request(options);
-      if (data && data?.data) {
-        setIndex(0);
-        setSong(songData[0]);
-        setSongId(songData[0]?.id);
-        setSongData(data?.data);
-        return data?.data;
+      if (data && Array.isArray(data.data) && data.data.length > 0) {
+        const index = Math.floor(Math.random() * data.data.length);
+        setIndex(index);
+        setSongData(data.data);
+        setSong(data.data[index]);
+        setSongId(data.data[index]?.id);
+        return data.data[index];
       } else {
         console.error("No suggestions data found.");
         return null;
