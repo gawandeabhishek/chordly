@@ -109,7 +109,7 @@ const Header = ({ setQ, setQuery }) => {
       <div
         className={`${
           showMenu == true ? "flex" : "hidden"
-        }  fixed top-[3.498rem] left-0 right-0 bottom-0 min-h-dvh w-dvw`}
+        }  fixed top-[3.498rem] left-0 right-0 bottom-0 max-h-fit w-dvw`}
       >
         <div
           className={
