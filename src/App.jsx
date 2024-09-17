@@ -101,7 +101,6 @@ const App = () => {
     }
   };
 
-  console.log(songs)
   const skipForward = async () => {
     if (index != 0) {
       songs.push(song);
