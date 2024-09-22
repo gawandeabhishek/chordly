@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Home from "./components/Home";
@@ -38,6 +38,14 @@ const App = () => {
 
   const isDragging = useRef(false);
   const newCurrentTimeRef = useRef(0);
+
+  const [option, setOption] = useState("All");
+  const [playlists, setPlaylists] = useState();
+  const [albums, setAlbums] = useState();
+  const [artists, setArtists] = useState();
+  const [displayType, setDisplayType] = useState("");
+
+  const location = useLocation();
 
   const onPlaying = () => {
     const duration = audioElement.current.duration;
@@ -153,8 +161,74 @@ const App = () => {
 
     try {
       const { data } = await axios.request(options);
-      setTracks(data?.data?.results);
+      setTracks(
+        data?.data?.results?.map((track) => ({
+          ...track,
+          type: "song",
+        }))
+      );
       setIsSongExist(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  const fetchplaylistData = async () => {
+    const options = {
+      method: "GET",
+      url: `${import.meta.env.VITE_WEB_URL}/api/search/playlists`,
+      params: { query: q === "" ? "bollywood" : q, limit: 100000 },
+    };
+
+    try {
+      const { data } = await axios.request(options);
+      setPlaylists(
+        data?.data?.results?.map((track) => ({
+          ...track,
+          type: "playlist",
+        }))
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchalbumData = async () => {
+    const options = {
+      method: "GET",
+      url: `${import.meta.env.VITE_WEB_URL}/api/search/albums`,
+      params: { query: q === "" ? "bollywood" : q, limit: 100000 },
+    };
+
+    try {
+      const { data } = await axios.request(options);
+      setAlbums(
+        data?.data?.results?.map((track) => ({
+          ...track,
+          type: "album",
+        }))
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchartistData = async () => {
+    const options = {
+      method: "GET",
+      url: `${import.meta.env.VITE_WEB_URL}/api/search/artists`,
+      params: { query: q === "" ? "bollywood" : q, limit: 100000 },
+    };
+
+    try {
+      const { data } = await axios.request(options);
+      setArtists(
+        data?.data?.results?.map((track) => ({
+          ...track,
+          type: "artist",
+        }))
+      );
     } catch (error) {
       console.error(error);
     }
@@ -271,6 +345,9 @@ const App = () => {
 
   useEffect(() => {
     fetchData();
+    fetchalbumData();
+    fetchplaylistData();
+    fetchartistData();
   }, [q]);
 
   useEffect(() => {
@@ -285,6 +362,10 @@ const App = () => {
       audioElement.current.pause();
     }
   }, [play, skipBack, skipForward]); // Only run this effect when the `play` `skipBack` or `skipForward` state changes
+
+  useEffect(() => {
+    setQ("");
+  }, [location]); 
 
   useEffect(() => {
     // Retrieve the song string from localStorage
@@ -400,7 +481,14 @@ const App = () => {
               setPlay={setPlay}
               setIsOnShow={setIsOnShow}
               q={q}
+              setQ={setQ}
               tracks={tracks}
+              playlists={playlists}
+              albums={albums}
+              artists={artists}
+              setOption={setOption}
+              option={option}
+              setDisplayType={setDisplayType}
             />
           }
         >
@@ -414,6 +502,12 @@ const App = () => {
               q={q}
               setPlay={setPlay}
               tracks={tracks}
+              playlists={playlists}
+              albums={albums}
+              artists={artists}
+              setOption={setOption}
+              option={option}
+              setDisplayType={setDisplayType}
             />
           }
         />
@@ -424,9 +518,17 @@ const App = () => {
               setPlay={setPlay}
               song={song}
               q={q}
+              setQ={setQ}
               setSongId={setSongId}
               tracks={tracks}
+              playlists={playlists}
+              albums={albums}
+              artists={artists}
               setIsOnShow={setIsOnShow}
+              setOption={setOption}
+              option={option}
+              displayType={displayType}
+              setDisplayType={setDisplayType}
             />
           }
         />
