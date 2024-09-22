@@ -94,7 +94,7 @@ const User = ({
         </div>
       ) : (
         <div className="mx-10 mb-10 min-h-[calc(100vh-10rem)] m-2">
-          <ul className="flex gap-4">
+          <ul className="flex gap-4 flex-wrap">
             {["All", "Songs", "Playlists", "Albums", "Artists"].map(
               (item, key) => (
                 <li

@@ -51,7 +51,7 @@ const Home = ({
 
   return (
     <div className="m-2 mx-10 mb-10 min-h-[calc(100vh-10rem)]">
-      <ul className="flex gap-4">
+      <ul className="flex gap-4  flex-wrap">
         {["All", "Songs", "Playlists", "Albums", "Artists"].map((item, key) => (
           <li
             key={key}
