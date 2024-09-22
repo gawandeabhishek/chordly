@@ -74,7 +74,7 @@ const Header = ({ setQ, setQuery }) => {
           onChange={getQuery}
           onKeyDown={handleKeyPress}
           name="searchBox"
-        />
+          />
       </div>
       <div className="flex gap-4 w-full sm:w-max justify-between sm:justify-normal items-center">
         <Link to={"/user"}>

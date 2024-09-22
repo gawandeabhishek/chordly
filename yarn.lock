@@ -2257,6 +2257,11 @@ media-typer@0.3.0:
   resolved "https://registry.npmjs.org/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
   integrity sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==
 
+memo@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/memo/-/memo-1.0.1.tgz#58c15674ed01cfab54d0efcbb14e685dab038784"
+  integrity sha512-fm6jIx2UgihPOiQqKzi+LBl5HT0I7kLyhmDu7zZvdEbmH83lTWOjLW3ef7RoWwgxMpgEYwsyHr+S03QcnFUsfQ==
+
 memory-pager@^1.0.2:
   version "1.5.0"
   resolved "https://registry.npmjs.org/memory-pager/-/memory-pager-1.5.0.tgz#d8751655d22d384682741c972f2c3d6dfa3e66b5"
