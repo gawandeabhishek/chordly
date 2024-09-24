@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Home from "./components/Home";
@@ -9,9 +15,6 @@ import User from "./components/User";
 
 import axios from "axios";
 import debounce from "lodash/debounce";
-
-let songs = [];
-
 const App = () => {
   const { id } = useParams();
   const [play, setPlay] = useState(true);
@@ -44,6 +47,8 @@ const App = () => {
   const [albums, setAlbums] = useState();
   const [artists, setArtists] = useState();
   const [displayType, setDisplayType] = useState("");
+  const [songs, setSongs] = useState([]);
+  const [isSong, setIsSong] = useState();
 
   const location = useLocation();
 
@@ -111,20 +116,23 @@ const App = () => {
 
   const skipForward = async () => {
     if (index != 0) {
-      songs.push(song);
+      setSongs([...songs, song]);
       setIndex(songs.length - 1);
     } else {
-      songs.unshift(song);
+      setSongs([song, ...songs]);
       setIndex(0);
     }
 
     let data;
-    if (songId) {
+    if (songId && isSong === "song") {
       data = await fetchSuggestions();
+    } else {
+      data = songs[(index + 1) % songs.length];
+      setIndex(index + 1);
     }
-
+    
+    console.log(songs);
     if (data) {
-      songs.push(data);
       setIndex(index + 1);
       setSong(data);
       setSongId(data.id);
@@ -172,7 +180,6 @@ const App = () => {
       console.error(error);
     }
   };
-
 
   const fetchplaylistData = async () => {
     const options = {
@@ -365,7 +372,7 @@ const App = () => {
 
   useEffect(() => {
     setQ("");
-  }, [location]); 
+  }, [location]);
 
   useEffect(() => {
     // Retrieve the song string from localStorage
@@ -441,7 +448,7 @@ const App = () => {
   }, [songId]);
 
   useEffect(() => {
-    if (songId !== null) {
+    if (songId !== null && isSong === "song") {
       fetchSuggestions(songId);
     }
   }, [index === songData?.length - 1]);
@@ -529,6 +536,11 @@ const App = () => {
               option={option}
               displayType={displayType}
               setDisplayType={setDisplayType}
+              songs={songs}
+              setSongs={setSongs}
+              setIsSong={setIsSong}
+              setIndex={setIndex}
+              isSong={isSong}
             />
           }
         />

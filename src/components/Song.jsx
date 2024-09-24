@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import he from "he";
 
-const Song = ({ song }) => {
+const Song = ({ song, setIsSong, isSong }) => {
+  useEffect(() => {
+    if (isSong !== "notSong")
+    setIsSong("song");
+  }, [])
+  
   return (
     <div className="min-h-[calc(100vh-12rem)]">
       <div className="flex items-center justify-center flex-col sm:flex-row gap-10 sm:gap-20 mx-16 mt-8 mb-20 sm:m-16">

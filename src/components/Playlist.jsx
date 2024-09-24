@@ -3,7 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import he from "he";
 import axios from "axios";
 
-const Playlist = ({ id, setDisplayType }) => {
+const Playlist = ({
+  id,
+  setDisplayType,
+  songs,
+  setSongs,
+  setIsSong,
+  setIndex,
+}) => {
   const [playlst, setPlaylst] = useState();
   const navigate = useNavigate();
 
@@ -24,6 +31,14 @@ const Playlist = ({ id, setDisplayType }) => {
 
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    if (playlst?.songs) {
+      setIndex(1);
+      setSongs([...playlst?.songs]);
+    }
+    setIsSong("notSong");
+  }, [playlst]);
 
   const handleSongClick = () => {
     setDisplayType("song");
@@ -59,7 +74,7 @@ const Playlist = ({ id, setDisplayType }) => {
           <Link to={`/show/${song?.id}`} onClick={handleSongClick}>
             <div
               key={idx}
-              className="w-48 h-[20rem] p-2 rounded-md bg-white dark:bg-slate-900/20 gap-2 flex flex-col items-center justify-start cursor-pointer hover:p-2 transition-all"
+              className="w-28 h-[15rem] sm:w-48 sm:h-[20rem] p-2 rounded-md bg-white dark:bg-slate-900/20 gap-2 flex flex-col items-center justify-start cursor-pointer hover:p-2 transition-all"
               onClick={() => navigate(`/show/${song?.id}`)}
             >
               <img
@@ -67,7 +82,7 @@ const Playlist = ({ id, setDisplayType }) => {
                 alt={song?.name}
                 className="rounded-md"
               />
-              <h4 className="font-bold text-slate-900 text-center w-fit dark:text-slate-50 mx-2">
+              <h4 className="text-xs sm:text-base font-bold text-slate-900 text-center w-fit dark:text-slate-50 mx-2">
                 {he.decode(song?.name || "")}
               </h4>
               <p className="text-slate-600 dark:text-slate-400 text-center text-xs w-[90%] mx-2 truncate">
