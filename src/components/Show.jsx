@@ -21,9 +21,14 @@ const Show = ({
   artists,
   displayType,
   setDisplayType,
+  songs,
+  setSongs,
+  setIsSong,
+  setIndex,
+  isSong
 }) => {
   const { id } = useParams();
-
+console.log(isSong);
   useEffect(() => {
     setSongId(id);
   }, [id]);
@@ -74,17 +79,34 @@ const Show = ({
     <>
       {q === "" ? (
         displayType === "song" ? (
-          <Song song={song} />
+          <Song song={song} setIsSong={setIsSong} isSong={isSong} />
         ) : displayType === "playlist" ? (
-          <Playlist id={id} setDisplayType={setDisplayType} />
+          <Playlist
+            id={id}
+            setDisplayType={setDisplayType}
+            songs={songs}
+            setSongs={setSongs}
+            setIsSong={setIsSong}
+            setIndex={setIndex}
+          />
         ) : displayType === "album" ? (
           <Album
             id={id}
             setDisplayType={setDisplayType}
             setToSong={setToSong}
+            setSongs={setSongs}
+            songs={songs}
+            setIsSong={setIsSong}
+            setIndex={setIndex}
           />
         ) : displayType === "artist" ? (
-          <Artist id={id} />
+          <Artist
+            id={id}
+            setSongs={setSongs}
+            songs={songs}
+            setIsSong={setIsSong}
+            setIndex={setIndex}
+          />
         ) : null
       ) : (
         <div className="mx-10 mb-10 min-h-[calc(100vh-10rem)] m-2">

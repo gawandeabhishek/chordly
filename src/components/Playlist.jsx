@@ -3,7 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import he from "he";
 import axios from "axios";
 
-const Playlist = ({ id, setDisplayType }) => {
+const Playlist = ({
+  id,
+  setDisplayType,
+  songs,
+  setSongs,
+  setIsSong,
+  setIndex,
+}) => {
   const [playlst, setPlaylst] = useState();
   const navigate = useNavigate();
 
@@ -24,6 +31,14 @@ const Playlist = ({ id, setDisplayType }) => {
 
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    if (playlst?.songs) {
+      setIndex(1);
+      setSongs([...playlst?.songs]);
+    }
+    setIsSong("notSong");
+  }, [playlst]);
 
   const handleSongClick = () => {
     setDisplayType("song");
