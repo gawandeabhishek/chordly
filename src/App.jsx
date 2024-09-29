@@ -15,6 +15,9 @@ import User from "./components/User";
 
 import axios from "axios";
 import debounce from "lodash/debounce";
+
+import { initGA, logPageView } from './analytics';
+
 const App = () => {
   const { id } = useParams();
   const [play, setPlay] = useState(true);
@@ -51,6 +54,15 @@ const App = () => {
   const [isSong, setIsSong] = useState();
 
   const location = useLocation();
+
+  useEffect(() => {
+    initGA();   // Initialize Google Analytics
+    logPageView();  // Log initial page load
+  }, []);
+
+  useEffect(() => {
+    logPageView();
+  }, [location]);
 
   const onPlaying = () => {
     const duration = audioElement.current.duration;
