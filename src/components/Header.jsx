@@ -1,4 +1,4 @@
-import { Home, Menu, Moon, Search, Sun, X } from "lucide-react";
+import { Home, Menu, Moon, Search, Sun, X, AppWindow } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -52,7 +52,7 @@ const Header = ({ setQ, setQuery }) => {
   };
 
   return (
-    <div className="sticky left-0 top-0 right-0 flex justify-between items-center px-10 bg-white/50 dark:bg-white/10 backdrop-blur-sm h-14 w-full">
+    <div className="sticky left-0 top-0 right-0 flex justify-between items-center sm:px-10 px-2 bg-white/50 dark:bg-white/10 backdrop-blur-sm h-14 w-full">
       <div className="sm:flex gap-4 items-center hidden">
         <Link
           to={"/"}
@@ -84,6 +84,10 @@ const Header = ({ setQ, setQuery }) => {
             className="rounded-full h-[2.50rem] w-[2.50rem] cursor-pointer"
           />
         </Link>
+        <a href="https://abhishek-gawande.vercel.app/" target="_blank" className="flex items-center gap-4 px-4 py-2 bg-slate-500/10 rounded-full cursor-pointer">
+          Portfolio{" "}
+          <AppWindow className="text-slate-800 dark:text-slate-200" />
+        </a>
         <div className="flex items-center justify-center gap-4 px-4 py-2 sm:p-2 rounded-full bg-slate-500/10">
           {mode === "dark" ? (
             <Moon

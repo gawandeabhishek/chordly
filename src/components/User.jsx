@@ -1,4 +1,4 @@
-import { Heart, ListMusic, UserPlus } from "lucide-react";
+import { Heart, ListMusic, UserPlus, AppWindow } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import he from "he";
@@ -89,6 +89,12 @@ const User = ({
               <span className="flex items-center justify-center bg-slate-500/10 text-slate-800 dark:text-slate-200 h-10 px-4 rounded-e-full">
                 100k+
               </span>
+            </p>
+            <p className="flex items-center justify-center gap-4 font-semibold text-sm sm:text-xl text-slate-800 dark:text-slate-200">
+              <a href="https://abhishek-gawande.vercel.app/" target="_blank" className="flex items-center gap-4 px-4 py-2 bg-slate-500/10 rounded-full cursor-pointer">
+                Portfolio{" "}
+                <AppWindow className="text-slate-800 dark:text-slate-200" />
+              </a>
             </p>
           </div>
         </div>
